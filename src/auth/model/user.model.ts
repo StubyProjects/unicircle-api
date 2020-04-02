@@ -10,7 +10,4 @@ export class UserModel {
 
   @Field()
   password?: string;
-
-  @Field(type => Boolean)
-  isActive?: boolean;
 }

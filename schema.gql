@@ -3,22 +3,25 @@
 # ------------------------------------------------------
 
 type Mutation {
-  registerUser(input: NewUserDto!): UserModel!
+  registerUser(input: NewUserInput!): UserModel!
+  loginUser(input: NewUserInput!): TokenModel!
 }
 
-input NewUserDto {
+input NewUserInput {
   email: String!
   password: String!
 }
 
 type Query {
-  user(id: Float!): UserModel!
-  allUsers: [UserModel!]!
+  hello: String!
+}
+
+type TokenModel {
+  accessToken: String!
 }
 
 type UserModel {
   id: Int!
   email: String!
   password: String!
-  isActive: Boolean!
 }
