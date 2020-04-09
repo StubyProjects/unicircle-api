@@ -17,12 +17,12 @@ export class AuthResolver {
   }
 
   @Mutation(returns => UserModel)
-  async registerUser(@Args('input') newUserInput: NewUserInput) {
+  async registerUser(@Args('newUserInput') newUserInput: NewUserInput) {
     return this.authService.register(newUserInput);
   }
 
   @Mutation(returns => TokenModel)
-  async loginUser(@Args('input') newUserInput: NewUserInput) {
+  async loginUser(@Args('newUserInput') newUserInput: NewUserInput) {
     return this.authService.login(newUserInput);
   }
 }

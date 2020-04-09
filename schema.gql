@@ -9,8 +9,8 @@ input CreateProductInput {
 }
 
 type Mutation {
-  registerUser(input: NewUserInput!): UserModel!
-  loginUser(input: NewUserInput!): TokenModel!
+  registerUser(newUserInput: NewUserInput!): UserModel!
+  loginUser(newUserInput: NewUserInput!): TokenModel!
   createProduct(createProductInput: CreateProductInput!): ProductModel!
 }
 

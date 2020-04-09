@@ -6,6 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
 
+import { passportJwtSecret } from 'jwks-rsa';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -13,9 +18,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private userRepository: UserRepository
   ) {
     super({
+      secretOrKeyProvider: passportJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `${process.env.AUTH0_DOMAIN}.well-known/jwks.json`,
+      }),
+
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      audience: process.env.AUTH0_AUDIENCE,
+      issuer: `${process.env.AUTH0_DOMAIN}`,
+      algorithms: ['RS256'],
+    });
+    /*
+    super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: 'jarminer2123'
     });
+    */
   }
 
   async validate(payload: JwtPayload): Promise<User> {
@@ -26,5 +46,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
     return user;
+  }
+
+  validateAuth0(payload: any) {
+    return payload;
   }
 }
