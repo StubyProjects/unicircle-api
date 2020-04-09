@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+
   async register(newUserInput: NewUserInput): Promise<User> {
     const { email, password } = newUserInput;
 
