@@ -12,11 +12,15 @@ export class ProductService {
   ) {
   }
 
-  async create(createProductInput: CreateProductInput): Promise<Product> {
+  async createProduct(createProductInput: CreateProductInput): Promise<Product> {
     return this.productsRepository.createProduct(createProductInput);
   }
 
-  async findOneById(id): Promise<Product> {
+  async findOneById(id: string): Promise<Product> {
     return this.productsRepository.findOneById(id);
+  }
+
+  async getAllProducts(): Promise<Array<Product>> {
+    return await this.productsRepository.getAllProducts();
   }
 }

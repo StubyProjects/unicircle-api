@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsRepository } from './products.repository';
 import { ProductService } from './product.service';
-import { ProductResolver } from './products.resolver';
+import { ProductsController } from './products.controller';
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { ProductResolver } from './products.resolver';
   ],
   providers: [
     ProductService,
-    ProductResolver
   ],
+  controllers: [ProductsController],
 })
 export class ProductsModule {}

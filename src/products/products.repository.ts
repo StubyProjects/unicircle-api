@@ -2,6 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import * as uuid from 'uuid/v1'
 
 @EntityRepository(Product)
 export class ProductsRepository extends Repository<Product> {
@@ -10,9 +11,10 @@ export class ProductsRepository extends Repository<Product> {
     const { name, price, image } = createProductInput;
 
     const product = new Product();
-    product.name = name;
-    product.price = price;
-    product.image = image;
+
+      product.name = name;
+      product.price = price;
+      product.image = image;
 
     try {
       await product.save();
@@ -28,6 +30,10 @@ export class ProductsRepository extends Repository<Product> {
 
   async findOneById(id) {
     return this.findOne(id);
+  }
+
+  async getAllProducts() {
+    return this.find();
   }
 
 }

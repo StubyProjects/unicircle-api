@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
+import { AuthzModule } from './authz/authz.module';
 
 @Module({
   imports: [
-    AuthModule,
-    GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
-      context: ({ req }) => ({ req })
-    }),
+    AuthzModule,
     TypeOrmModule.forRoot(),
     ProductsModule,
   ]
