@@ -1,10 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { Product } from './model/product.model';
+import { Product } from '../types/product.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { GetProductsFilterDto } from './dto/get-products-filter.dto';
+import { UpdateProductInput } from './dto/create-product.input';
+import { User } from '../custom-decorators/user.decorator';
+import { User as UserEntity} from '../types/user.model';
 
 /**
  * Controller for the products. Communicates with the frontend Client application.
@@ -20,7 +23,7 @@ export class ProductsController {
 
 
   @Get()
-  async getProducts(@Query() filterDto: GetTasksFilterDto): Promise<Array<Product>> {
+  async getProducts(@Query() filterDto: GetProductsFilterDto): Promise<Array<Product>> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);
@@ -35,26 +38,39 @@ export class ProductsController {
     return this.productService.findOneById(id);
   }
 
-  @Get('/:title')
-  async findByTitle(@Param('title') title:string) {
-    return this.productService.findByTitle(title);
+  @Get('books')
+  async getSellerProducts( @User() user: UserEntity) {
+    return this.productService.getSellerProducts(user);
+  }
+
+  @Get('search/:term')
+  async getBySearchTerm(@Param('term') term:string) {
+    return this.productService.getBySearch(term);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async createProduct(@Body() createProductInput: CreateProductInput): Promise<Product> {
-    return this.productService.createProduct(createProductInput);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Delete('/:id')
-  async deleteProduct(@Param('id') id:string): Promise<DeleteResult> {
-    return this.productService.deleteProduct(id);
+  async createProduct(
+    @Body() createProductInput: CreateProductInput,
+    @User() user: UserEntity): Promise<Product> {
+    return this.productService.createProduct(createProductInput, user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/:id')
-  async updateProduct(@Param('id') id:string, @Body('attribute') attribute: string) {
-    return this.productService.updateProduct(id, attribute);
+  async updateProduct(
+    @Param('id') id:string,
+    @Body() updateProductInput: UpdateProductInput,
+    @User() user: UserEntity): Promise<Product> {
+
+    return this.productService.updateProduct(id, updateProductInput, user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('/:id')
+  async deleteProduct(
+    @Param('id') id:string,
+    @User() user: UserEntity): Promise<DeleteResult> {
+    return this.productService.deleteProduct(id, user);
   }
 }

@@ -5,9 +5,17 @@ export class CreateProductInput {
   name: string;
 
   @IsString()
+  description: string;
+
+  @IsString()
+  author: string;
+
+  @IsString()
   price: string;
 
   @IsString()
   image: string;
 
 }
+
+export type UpdateProductInput = Partial<CreateProductInput>;

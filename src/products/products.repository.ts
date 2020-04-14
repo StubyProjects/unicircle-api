@@ -1,62 +1,34 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { Product } from './product.entity';
-import { CreateProductInput } from './dto/create-product.input';
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
-import * as uuid from 'uuid/v1'
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 
 @EntityRepository(Product)
 export class ProductsRepository extends Repository<Product> {
 
-  async createProduct(createProductInput: CreateProductInput) {
-    const { name, price, image } = createProductInput;
 
-    const product = new Product();
-
-      product.name = name;
-      product.price = price;
-      product.image = image;
-
-    try {
-      await product.save();
-      return product;
-    } catch (error) {
-      if(error.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('Product with this name already exists')
-      } else{
-        throw new InternalServerErrorException();
-      }
-    }
-  }
-
-  async findOneById(id) {
-    return this.findOne(id);
-  }
-
-  async findByTitle(title) {
-    return this.find({ where: { title: title}});
-  }
-
-  async getAllProducts() {
-    return this.find();
+  async findBySearch(searchTerm) {
+    return await this.find({ where: [
+        { name: Like('%' + searchTerm + '%') },
+        { description: Like('%' + searchTerm + '%') },
+        { author: Like('%' + searchTerm + '%') },
+      ]
+    });
   }
 
   /*
-  Searches for products where one of the specified attributes matches the specified search term.
+   *Searches for products where one of the specified attributes partially matches the specified search term.
+   * (FULL TEXT SEARCH)
    */
-  async getProductsWithFilters(filterDto:GetTasksFilterDto) {
-
+  async getProductsWithFilters(filterDto: GetProductsFilterDto) {
     const { search } = filterDto;
-
-    return this.find( { where: [ { title: search}, { description: search}, { author: search}]});
-  }
-
-  async deleteProduct(id) {
-    return this.delete(id);
-  }
-
-  async updateProduct(id, updatedAttribute) {
-    return this.update(id, updatedAttribute)
+    return this.find(
+      {
+        where: [
+          { name: Like('%' + search + '%') },
+          { description: Like('%' + search + '%') },
+          { author: Like('%' + search + '%') },
+        ],
+      });
   }
 
 }

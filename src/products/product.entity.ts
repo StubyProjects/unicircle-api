@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Unique } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Unique, Index } from 'typeorm';
 
 @Entity()
 @Unique(['name'])
@@ -6,12 +6,15 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index({ fulltext: true })
   @Column()
   name: string;
 
+  @Index({ fulltext: true })
   @Column()
   description: string;
 
+  @Index({ fulltext: true })
   @Column()
   author: string;
 
@@ -20,4 +23,8 @@ export class Product extends BaseEntity {
 
   @Column()
   image: string;
+
+  /* ID of user which owns the book */
+  @Column()
+  owner: string;
 }
