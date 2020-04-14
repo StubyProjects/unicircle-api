@@ -121,7 +121,7 @@ export class ProductService {
   }
 
   async getSellerProducts(user): Promise<Productlisting[]> {
-    return await this.productlistingRepository.find({ where: { owner: user.id } });
+    return await this.productlistingRepository.find({ where: { userId: user.id } });
   }
 
   async getProductsWithFilters(filterDto: GetProductsFilterDto) {
@@ -146,6 +146,10 @@ export class ProductService {
 
   async deleteProduct(id, user): Promise<DeleteResult> {
     if (this.validateOwner(id, user)) {
+      const images = await this.imagesRepository.find( { where: { productListingID: id}});
+      images.forEach(image => {
+        this.imagesRepository.delete(image);
+      });
       return this.productlistingRepository.delete(id);
     }
   }
