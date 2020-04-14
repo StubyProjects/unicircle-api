@@ -1,29 +1,30 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { Product } from '../types/product.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { UpdateProductInput } from './dto/create-product.input';
 import { User } from '../custom-decorators/user.decorator';
-import { User as UserEntity} from '../types/user.model';
+import { UserModel as UserEntity} from '../types/user.model';
+import { Product } from '../entities/product.entity';
+import { Productlisting } from '../entities/productlisting.entity';
 
 /**
- * Controller for the products. Communicates with the frontend Client application.
+ * Controller for the product. Communicates with the frontend Client application.
  * It's methods call methods from the productService, which then again communicates with the productRepository.
  *
  * @author (Paul Dietrich)
  * @version (13.04.2020)
  */
-@Controller('products')
+@Controller('product')
 export class ProductsController {
 
   constructor(private productService: ProductService) {}
 
 
   @Get()
-  async getProducts(@Query() filterDto: GetProductsFilterDto): Promise<Array<Product>> {
+  async getProducts(@Query() filterDto: GetProductsFilterDto): Promise<Product[]> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);
@@ -52,7 +53,7 @@ export class ProductsController {
   @Post()
   async createProduct(
     @Body() createProductInput: CreateProductInput,
-    @User() user: UserEntity): Promise<Product> {
+    @User() user: UserEntity): Promise<Product | Productlisting> {
     return this.productService.createProduct(createProductInput, user);
   }
 
@@ -61,7 +62,7 @@ export class ProductsController {
   async updateProduct(
     @Param('id') id:string,
     @Body() updateProductInput: UpdateProductInput,
-    @User() user: UserEntity): Promise<Product> {
+    @User() user: UserEntity): Promise<Productlisting> {
 
     return this.productService.updateProduct(id, updateProductInput, user);
   }

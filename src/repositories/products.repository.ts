@@ -1,6 +1,6 @@
 import { EntityRepository, Like, Repository } from 'typeorm';
-import { Product } from './product.entity';
-import { GetProductsFilterDto } from './dto/get-products-filter.dto';
+import { Product } from '../entities/product.entity';
+import { GetProductsFilterDto } from '../product/dto/get-products-filter.dto';
 
 @EntityRepository(Product)
 export class ProductsRepository extends Repository<Product> {
@@ -16,7 +16,7 @@ export class ProductsRepository extends Repository<Product> {
   }
 
   /*
-   *Searches for products where one of the specified attributes partially matches the specified search term.
+   *Searches for product where one of the specified attributes partially matches the specified search term.
    * (FULL TEXT SEARCH)
    */
   async getProductsWithFilters(filterDto: GetProductsFilterDto) {

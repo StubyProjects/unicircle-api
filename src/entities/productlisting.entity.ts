@@ -2,29 +2,26 @@ import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Unique, Index } fro
 
 @Entity()
 @Unique(['name'])
-export class Product extends BaseEntity {
+export class Productlisting extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Index({ fulltext: true })
   @Column()
-  name: string;
+  createdAt: string;
 
   @Index({ fulltext: true })
-  @Column()
-  description: string;
-
-  @Index({ fulltext: true })
-  @Column()
-  author: string;
-
   @Column()
   price: string;
 
+  @Index({ fulltext: true })
   @Column()
-  image: string;
+  userId: string;
 
-  /* ID of user which owns the book */
   @Column()
-  owner: string;
+  productId: string;
+
+  @Column()
+  conditionId: string;
+
 }

@@ -1,16 +1,9 @@
-export interface Product {
-
+export interface ProductModel {
   id: number;
-
-  name: string;
-
+  title: string;
   description: string;
-
   author: string;
-
-  price: string;
-
-  image: string;
-
-  owner: string;
+  list_price: string;
+  image_url: string;
+  category: string;
 }
