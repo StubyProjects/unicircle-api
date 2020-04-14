@@ -44,9 +44,9 @@ export class ProductService {
     const { title,images } = createProductInput;
 
     // checks if the product is already in the database (in the product table).
-    const existingProduct = await this.productsRepository.findOne({ where: { title: title } });
+    let existingProduct = await this.productsRepository.findOne({ where: { title: title } });
     if (!existingProduct) {
-      await this.createProductEntity(createProductInput);
+      existingProduct = await this.createProductEntity(createProductInput);
     }
 
     const newCondition = await this.createCondition(createProductInput);
