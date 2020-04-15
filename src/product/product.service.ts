@@ -49,7 +49,6 @@ export class ProductService {
    * @param user
    */
   async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
-    console.log(user)
 
     const { isbn,images, conditionName } = createProductInput;
 
