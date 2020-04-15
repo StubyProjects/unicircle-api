@@ -4,8 +4,8 @@
   "port": 3306,
   "username": "root",
   "password": "",
-  "database": "test",
+  "database": "unicircle",
   "entities": ["dist/**/*.entity.js"],
   "synchronize": true,
-  "logging": true
+  "logging": false
 }

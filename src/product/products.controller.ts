@@ -7,8 +7,8 @@ import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { UpdateProductInput } from './dto/create-product.input';
 import { User } from '../custom-decorators/user.decorator';
 import { UserModel as UserEntity} from '../types/user.model';
-import { Product } from '../entities/product.entity';
-import { Productlisting } from '../entities/productlisting.entity';
+import { Product } from './entities/product.entity';
+import { Productlisting } from './entities/productlisting.entity';
 
 /**
  * Controller for the product. Communicates with the frontend Client application.
@@ -24,13 +24,13 @@ export class ProductsController {
 
 
   @Get()
-  async getProducts(@Query() filterDto: GetProductsFilterDto): Promise<Product[]> {
+  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('pages') pages): Promise<Product[]> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);
     }
     else {
-      return this.productService.getAllProducts()
+      return this.productService.getAllProducts(pages)
     }
   }
 
@@ -49,6 +49,8 @@ export class ProductsController {
     return this.productService.getBySearch(term);
   }
 
+
+  //@UseGuards(AuthGuard('jwt'))
   @Post()
   async listProduct(
     @Body() createProductInput: CreateProductInput,
