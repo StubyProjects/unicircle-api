@@ -12,7 +12,7 @@ import { DeleteResult } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { map } from 'rxjs/operators';
 import { Productlisting } from '../entities/productlisting.entity';
-import { Condition } from '../entities/condition.entity';
+import { Condition, conditionName } from '../entities/condition.entity';
 import { ImagesRepository } from '../repositories/images.repository';
 import { ConditionsRepository } from '../repositories/conditions.repository';
 
@@ -40,21 +40,25 @@ export class ProductService {
    * @param createProductInput - all data which is needed to create a new product
    * @param user
    */
-  async createProduct(createProductInput: CreateProductInput, user): Promise<Product | Productlisting> {
-    const { title,images } = createProductInput;
+  async listProduct(createProductInput: CreateProductInput): Promise<Product | Productlisting> {
+    const { isbn,images, conditionName } = createProductInput;
 
     // checks if the product is already in the database (in the product table).
-    let existingProduct = await this.productsRepository.findOne({ where: { title: title } });
-    if (!existingProduct) {
-      existingProduct = await this.createProductEntity(createProductInput);
+    let existingProduct = await this.productsRepository.findOne({ where: { isbn: isbn } });
+    console.log(existingProduct);
+    if (existingProduct == undefined) {
+      existingProduct = await this.createProduct(createProductInput);
     }
 
-    const newCondition = await this.createCondition(createProductInput);
-    const productListing = await this.createProductListing(createProductInput, user, existingProduct.id, newCondition);
+    let newCondition = await this.conditionRepository.findOne({ where: { name: conditionName}});
+    if(newCondition == undefined) {
+       newCondition = await this.createCondition(createProductInput);
+    }
+    const productListing = await this.createProductListing(createProductInput, existingProduct, newCondition);
 
     // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
     await images.forEach(image => {
-      image.productListingID = productListing.id.toString();
+      image.productListing = productListing;
       this.imagesRepository.save(image);
     });
     return productListing;
@@ -64,17 +68,16 @@ export class ProductService {
    * Creates a new product listing in the database.
    * @param createProductInput - attributes of the product which are needed to create the listing
    * @param user - seller who makes the listing
-   * @param existingProductId - id of the general product
+   * @param existingProduct
    * @param newCondition - the condition in which the product is in
    */
-  private async createProductListing(createProductInput: CreateProductInput, user, existingProductId, newCondition) {
+  private async createProductListing(createProductInput: CreateProductInput, existingProduct, newCondition) {
     const { price } = createProductInput;
     const productListing = new Productlisting();
     productListing.createdAt = Date.now().toString();
     productListing.price = price;
-    productListing.userId = user.id;
-    productListing.productId = existingProductId;
-    productListing.conditionId = newCondition.id;
+    productListing.product = existingProduct;
+    productListing.condition = newCondition;
     await this.productlistingRepository.save(productListing);
     return productListing;
   }
@@ -97,7 +100,7 @@ export class ProductService {
    * Creates a new product in the product table. This only happens if the specified product isn't in the database already.
    * @param createProductInput - the attributes which are needed to create the product.
    */
-  private async createProductEntity(createProductInput: CreateProductInput) {
+  private async createProduct(createProductInput: CreateProductInput) {
     const { title, isbn, description, author, listPrice, imageUrl, category } = createProductInput;
 
     const product = new Product();

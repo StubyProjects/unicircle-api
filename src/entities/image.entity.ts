@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
+import { Productlisting } from './productlisting.entity';
 
 @Entity()
 export class Image extends BaseEntity{
@@ -9,6 +10,6 @@ export class Image extends BaseEntity{
   @Column()
   imageUrl: string;
 
-  @Column()
-  productListingID: string;
+  @ManyToOne(type => Productlisting, productlisting => productlisting.images)
+  productListing: Productlisting;
 }

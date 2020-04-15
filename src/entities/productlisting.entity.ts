@@ -1,7 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Unique, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  Index,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
+import { Image } from './image.entity';
+import { Condition } from './condition.entity';
+import { Product } from './product.entity';
 
 @Entity()
-@Unique(['name'])
 export class Productlisting extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,7 +31,12 @@ export class Productlisting extends BaseEntity {
   @Column()
   productId: string;
 
-  @Column()
-  conditionId: string;
+  @ManyToOne(type => Condition, condition => condition.productListing)
+  condition: Condition;
 
+  @OneToMany(type => Image, image => image.productListing)
+  images: Image[];
+
+  @ManyToOne(type => Product, condition => condition.productListings)
+  product: Product;
 }

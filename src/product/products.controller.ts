@@ -49,12 +49,11 @@ export class ProductsController {
     return this.productService.getBySearch(term);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
-  async createProduct(
+  async listProduct(
     @Body() createProductInput: CreateProductInput,
-    @User() user: UserEntity): Promise<Product | Productlisting> {
-    return this.productService.createProduct(createProductInput, user);
+    /*@User() user: UserEntity*/): Promise<Product | Productlisting> {
+    return this.productService.listProduct(createProductInput);
   }
 
   @UseGuards(AuthGuard('jwt'))
