@@ -1,7 +1,7 @@
 import { EntityRepository, Like, Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
-import {CreateProductInput} from "../dto/create-product.input";
+import { CreateProductInput } from "../dto/create-product.input";
 
 @EntityRepository(Product)
 export class ProductsRepository extends Repository<Product> {
@@ -24,14 +24,6 @@ export class ProductsRepository extends Repository<Product> {
         await this.save(product);
         return product;
     }
-
-  async findBySearch(searchTerm) {
-    return await this.find({ where: [
-        { description: Like('%' + searchTerm + '%') },
-        { author: Like('%' + searchTerm + '%') },
-      ]
-    });
-  }
 
   /*
    *Searches for product where one of the specified attributes partially matches the specified search term.
