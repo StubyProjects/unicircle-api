@@ -8,7 +8,6 @@ export class ProductsRepository extends Repository<Product> {
 
   async findBySearch(searchTerm) {
     return await this.find({ where: [
-        { name: Like('%' + searchTerm + '%') },
         { description: Like('%' + searchTerm + '%') },
         { author: Like('%' + searchTerm + '%') },
       ]
@@ -24,7 +23,6 @@ export class ProductsRepository extends Repository<Product> {
     return this.find(
       {
         where: [
-          { name: Like('%' + search + '%') },
           { description: Like('%' + search + '%') },
           { author: Like('%' + search + '%') },
         ],

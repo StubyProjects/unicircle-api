@@ -40,7 +40,7 @@ export class ProductService {
    * @param createProductInput - all data which is needed to create a new product
    * @param user
    */
-  async listProduct(createProductInput: CreateProductInput): Promise<Product | Productlisting> {
+  async listProduct(createProductInput: CreateProductInput, user): Promise<Product | Productlisting> {
     const { isbn,images, conditionName } = createProductInput;
 
     // checks if the product is already in the database (in the product table).
@@ -54,7 +54,7 @@ export class ProductService {
     if(newCondition == undefined) {
        newCondition = await this.createCondition(createProductInput);
     }
-    const productListing = await this.createProductListing(createProductInput, existingProduct, newCondition);
+    const productListing = await this.createProductListing(createProductInput, existingProduct, newCondition, user);
 
     // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
     await images.forEach(image => {
@@ -71,13 +71,14 @@ export class ProductService {
    * @param existingProduct
    * @param newCondition - the condition in which the product is in
    */
-  private async createProductListing(createProductInput: CreateProductInput, existingProduct, newCondition) {
+  private async createProductListing(createProductInput: CreateProductInput, existingProduct, newCondition, user) {
     const { price } = createProductInput;
     const productListing = new Productlisting();
     productListing.createdAt = Date.now().toString();
     productListing.price = price;
     productListing.product = existingProduct;
     productListing.condition = newCondition;
+    productListing.userId = user.id;
     await this.productlistingRepository.save(productListing);
     return productListing;
   }
