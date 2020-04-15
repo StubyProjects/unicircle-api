@@ -7,8 +7,8 @@ import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { UpdateProductInput } from './dto/create-product.input';
 import { User } from '../custom-decorators/user.decorator';
 import { UserModel as UserEntity} from '../types/user.model';
-import { Product } from '../entities/product.entity';
-import { Productlisting } from '../entities/productlisting.entity';
+import { Product } from './entities/product.entity';
+import { Productlisting } from './entities/productlisting.entity';
 
 /**
  * Controller for the product. Communicates with the frontend Client application.
@@ -49,7 +49,7 @@ export class ProductsController {
     return this.productService.getBySearch(term);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   @Post()
   async listProduct(
     @Body() createProductInput: CreateProductInput,
