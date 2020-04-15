@@ -8,7 +8,7 @@ import { ProductsRepository } from '../repositories/products.repository';
 import { ProductlistingRepository } from '../repositories/productlisting.repository';
 import { CreateProductInput } from './dto/create-product.input';
 import { Product } from '../entities/product.entity';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Like } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { map } from 'rxjs/operators';
 import { Productlisting } from '../entities/productlisting.entity';
@@ -40,12 +40,11 @@ export class ProductService {
    * @param createProductInput - all data which is needed to create a new product
    * @param user
    */
-  async listProduct(createProductInput: CreateProductInput, user): Promise<Product | Productlisting> {
+  async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
     const { isbn,images, conditionName } = createProductInput;
 
     // checks if the product is already in the database (in the product table).
     let existingProduct = await this.productsRepository.findOne({ where: { isbn: isbn } });
-    console.log(existingProduct);
     if (existingProduct == undefined) {
       existingProduct = await this.createProduct(createProductInput);
     }
@@ -129,11 +128,11 @@ export class ProductService {
   }
 
   async getProductsWithFilters(filterDto: GetProductsFilterDto) {
-    return await this.productsRepository.getProductsWithFilters(filterDto);
+    return await this.getProductsWithFiltersDB(filterDto);
   }
 
   async getBySearch(searchTerm) {
-    const products: Array<Product> = await this.productsRepository.findBySearch(searchTerm);
+    const products: Array<Product> = await this.findBySearch(searchTerm);
     if (products.length == 0) {
       return this.googleBookSearch(searchTerm);
     } else {
@@ -150,7 +149,8 @@ export class ProductService {
 
   async deleteProduct(id, user): Promise<DeleteResult> {
     if (this.validateOwner(id, user)) {
-      const images = await this.imagesRepository.find( { where: { productListingID: id}});
+      const productListing = await this.productlistingRepository.findOne(id);
+      const images = await this.imagesRepository.find( { where: { productListing: productListing}});
       images.forEach(image => {
         this.imagesRepository.delete(image);
       });
@@ -181,5 +181,28 @@ export class ProductService {
     } else {
       return true;
     }
+  }
+
+  async findBySearch(searchTerm) {
+    return await this.productsRepository.find({ where: [
+        { description: Like('%' + searchTerm + '%') },
+        { author: Like('%' + searchTerm + '%') },
+      ]
+    });
+  }
+
+  /*
+   *Searches for product where one of the specified attributes partially matches the specified search term.
+   * (FULL TEXT SEARCH)
+   */
+  async getProductsWithFiltersDB(filterDto: GetProductsFilterDto) {
+    const { search } = filterDto;
+    return this.productsRepository.find(
+      {
+        where: [
+          { description: Like('%' + search + '%') },
+          { author: Like('%' + search + '%') },
+        ],
+      });
   }
 }

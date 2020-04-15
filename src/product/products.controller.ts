@@ -53,7 +53,7 @@ export class ProductsController {
   @Post()
   async listProduct(
     @Body() createProductInput: CreateProductInput,
-    @User() user: UserEntity): Promise<Product | Productlisting> {
+    @User() user: UserEntity): Promise<Productlisting> {
     return this.productService.listProduct(createProductInput, user);
   }
 
