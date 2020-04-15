@@ -50,7 +50,7 @@ export class ProductsController {
   }
 
 
-  //@UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async listProduct(
     @Body() createProductInput: CreateProductInput,
