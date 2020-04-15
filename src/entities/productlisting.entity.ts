@@ -28,9 +28,6 @@ export class Productlisting extends BaseEntity {
   @Column()
   userId: string;
 
-  @Column()
-  productId: string;
-
   @ManyToOne(type => Condition, condition => condition.productListing)
   condition: Condition;
 
