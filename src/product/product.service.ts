@@ -49,6 +49,8 @@ export class ProductService {
    * @param user
    */
   async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
+    console.log(user)
+
     const { isbn,images, conditionName } = createProductInput;
 
     // checks if the product is already in the database (in the product table).

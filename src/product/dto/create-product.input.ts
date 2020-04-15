@@ -1,6 +1,6 @@
 import { IsArray, IsObject, IsString, MinLength } from 'class-validator';
-import { conditionName } from '../../entities/condition.entity';
-import { Image } from '../../entities/image.entity';
+import { conditionName } from '../entities/condition.entity';
+import { Image } from '../entities/image.entity';
 export class CreateProductInput {
   @IsString()
   @MinLength(4)
