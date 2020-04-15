@@ -77,7 +77,7 @@ export class ProductService {
     productListing.price = price;
     productListing.product = existingProduct;
     productListing.condition = newCondition;
-    productListing.userId = user.id;
+    //productListing.userId = user.id;
     await this.productlistingRepository.save(productListing);
     return productListing;
   }

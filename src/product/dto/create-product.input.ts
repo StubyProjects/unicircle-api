@@ -27,7 +27,7 @@ export class CreateProductInput {
   @IsString()
   category: string;
 
-  @IsObject()
+  @IsString()
   conditionName: conditionName;
 
   @IsString()
