@@ -40,4 +40,12 @@ export class ProductsRepository extends Repository<Product> {
       });
   }
 
+  async findBySearch(searchTerm) {
+    return await this.find({ where: [
+        { description: Like('%' + searchTerm + '%') },
+        { author: Like('%' + searchTerm + '%') },
+      ]
+    });
+  }
+
 }

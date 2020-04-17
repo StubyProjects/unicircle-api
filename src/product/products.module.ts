@@ -6,10 +6,12 @@ import { ImagesRepository} from './repositories/images.repository';
 import { ConditionsRepository} from './repositories/conditions.repository';
 import { ProductService } from './product.service';
 import { ProductsController } from './products.controller';
+import { ReviewRepository } from '../review/review.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProductsRepository, ProductlistingRepository, ImagesRepository, ConditionsRepository]),
+    TypeOrmModule.forFeature([ProductsRepository, ProductlistingRepository, ImagesRepository, ConditionsRepository,
+      ReviewRepository]),
     HttpModule
   ],
   providers: [

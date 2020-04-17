@@ -13,24 +13,25 @@ import { Productlisting } from './entities/productlisting.entity';
 /**
  * Controller for the product. Communicates with the frontend Client application.
  * It's methods call methods from the productService, which then again communicates with the productRepository.
+ * Can be called by http://localhost:8000/product
  *
  * @author (Paul Dietrich)
  * @version (13.04.2020)
  */
-@Controller('product')
+@Controller('products')
 export class ProductsController {
 
   constructor(private productService: ProductService) {}
 
 
   @Get()
-  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('pages') pages): Promise<Product[]> {
+  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('page') page): Promise<Product[]> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);
     }
     else {
-      return this.productService.getAllProducts(pages)
+      return this.productService.getAllProducts(page)
     }
   }
 
@@ -40,7 +41,7 @@ export class ProductsController {
   }
 
   @Get('books')
-  async getSellerProducts( @User() user: UserEntity) {
+  async getSellerProducts(@User() user: UserEntity) {
     return this.productService.getSellerProducts(user);
   }
 
@@ -73,6 +74,6 @@ export class ProductsController {
   async deleteProduct(
     @Param('id') id:string,
     @User() user: UserEntity): Promise<DeleteResult> {
-    return this.productService.deleteProduct(id, user);
+    return this.productService.deleteProductListing(id, user);
   }
 }

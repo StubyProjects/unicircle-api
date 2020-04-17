@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { Productlisting } from '../entities/productlisting.entity';
 import {CreateProductInput} from "../dto/create-product.input";
 

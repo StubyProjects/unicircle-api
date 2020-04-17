@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Index, OneToMany } from 'typeorm';
 import { Productlisting } from './productlisting.entity';
+import { Image } from './image.entity';
+import { Review } from '../../review/review.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -33,5 +35,8 @@ export class Product extends BaseEntity {
 
   @OneToMany(type => Productlisting, productListing => productListing.product)
   productListings: Productlisting[];
+
+  @OneToMany(type => Review, review => review.product)
+  reviews: Review[];
 
 }
