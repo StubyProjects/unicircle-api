@@ -1,6 +1,4 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { map } from 'rxjs/operators';
-import { response } from 'express';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
