@@ -4,7 +4,9 @@ import { UniversityRepository } from './repositories/university.repository';
 import { ReadingRepository } from './repositories/reading.repository';
 import { CourseRepository } from './repositories/course.repository';
 import { ProductsRepository } from '../product/repositories/products.repository';
-import { Product } from '../product/entities/product.entity';
+import { getRepository } from 'typeorm';
+import { University } from './entities/university.entity';
+import { Course } from './entities/course.entity';
 
 /**
  * Service which connects to the database for university related operations.
@@ -18,46 +20,40 @@ export class UniversityService {
 
               @InjectRepository(ReadingRepository) private readingRepository: ReadingRepository,
 
-              @InjectRepository(CourseRepository) private courseRepository: ReadingRepository,
+              @InjectRepository(CourseRepository) private courseRepository: CourseRepository,
 
               @InjectRepository(ProductsRepository) private productRepository: ProductsRepository) {}
 
   /**
-   * Gets all products which are read in all courses of the university
-   * @param id - id of the university
+   * Returns all universities in the database
    */
-  async getProductsById(id): Promise<Product[]> {
-    const products = [];
-    const courses =  await this.courseRepository.find({ where: { university: id}});
-
-    for (const course of courses) {
-      const readings = await this.readingRepository.find({ where: { course: course}});
-
-      for (const reading of readings) {
-        const readingProducts = await this.productRepository.find({ where: { id: reading.product}});
-        products.push(readingProducts);
-      }
-    }
-    return [...new Set(products)];
+  async getUniversities(): Promise<University[]> {
+    return this.universityRepository.find();
   }
 
   /**
-   * Gets all products of all courses of one university but from a specific semester
-   * @param id - the id of the university
-   * @param semester - the semester which is searched
+   * Returns all courses of one university
+   * @param uniId - the id of the university
    */
-  async getSemesterProductsById(id, semester) {
-    const products = await this.getProductsById(id);
-    return products.filter(product => product.readings.filter(reading => reading.semester = semester));
+  async getCoursesOfUniversity(uniId): Promise<Course[]> {
+    const university = await this.universityRepository.find({ where: { id: uniId}});
+    return this.courseRepository.find({ where: { university: university}});
   }
 
   /**
    * Gets all products of one courses of one university.
-   * @param id - the id of the university
-   * @param course - the course which is searched
+   * @param courseId - id of the course which is searched
    */
-  async getCourseProductsById(id, course) {
-    const products = await this.getProductsById(id);
-    return products.filter(product => product.readings.filter(reading => reading.course.name = course));
+  async getCourseProductsById(courseId) {
+    return this.courseRepository.getCourseProductsById(courseId);
+  }
+
+  /**
+   * Gets all products which are read in all courses of the university
+   * @param courseId - Id of the course which is searched
+   * @param semester - the semester which is searched
+   */
+  async getSemesterProductsById(courseId, semester) {
+    return this.courseRepository.getSemesterProductsById(courseId, semester);
   }
  }

@@ -9,7 +9,7 @@ export class ConditionsRepository extends Repository<Condition> {
      * Creates a new condition in the database.
      * @param createProductInput -  attributes of the product which are needed to create the condition.
      */
-    async createCondition(createProductInput: CreateProductInput) {
+    async createEntity(createProductInput: CreateProductInput) {
         const { conditionName, conditionDescription } = createProductInput;
 
         const condition = new Condition();

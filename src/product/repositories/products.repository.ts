@@ -10,7 +10,7 @@ export class ProductsRepository extends Repository<Product> {
      * Creates a new product in the product table. This only happens if the specified product isn't in the database already.
      * @param createProductInput - the attributes which are needed to create the product.
      */
-    async createProduct(createProductInput: CreateProductInput) {
+    async createEntity(createProductInput: CreateProductInput) {
         const { title, isbn, description, author, listPrice, imageUrl, category } = createProductInput;
 
         const product = new Product();

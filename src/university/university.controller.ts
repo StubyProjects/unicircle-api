@@ -1,11 +1,13 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { Product } from '../product/entities/product.entity';
+import { University } from './entities/university.entity';
+import { Course } from './entities/course.entity';
 
 /**
  * Controller API which handles requests from the client related to university stuff.
  * @author (Paul Dietrich)
- * @version (17.04.2020)
+ * @version (18.04.2020)
  */
 @Controller('university')
 export class UniversityController {
@@ -13,21 +15,40 @@ export class UniversityController {
   constructor(private universityService: UniversityService) {}
 
   /**
-   * Returns all products which are read in all courses of the university.
-   * @param id - id of the university
+   * returns all universities in the database
    */
-  @Get('/:id/products')
-  async getProductsById(@Param('id') id: string): Promise<Product[]> {
-    return this.universityService.getProductsById(id);
+  @Get()
+  async getUniversities(): Promise<University[]> {
+    return this.universityService.getUniversities();
   }
 
-  @Get('/:id/products/semester/:sem')
-  async getSemesterProductsById(@Param('id') id: string,@Param('sem') sem: string): Promise<Product[]> {
-    return this.universityService.getSemesterProductsById(id, sem);
+  /**
+   * Returns all courses of one university
+   * @param uniId - the id of the university
+   */
+  @Get('/:uniId/courses')
+  async getCoursesOfUniversity(@Param('uniId') uniId: string,): Promise<Course[]> {
+    return this.universityService.getCoursesOfUniversity(uniId);
   }
 
-  @Get('/:id/products/course/:course')
-  async getCourseProductsById(@Param('id') id: string,@Param('course') course: string): Promise<Product[]> {
-    return this.universityService.getCourseProductsById(id, course);
+  /**
+   * Returns all products which are read in one course of a university.
+   * @param courseId - id of the course
+   */
+  @Get('/course/:courseId/products')
+  async getCourseProductsById(@Param('courseId') courseId: string) {
+    return this.universityService.getCourseProductsById(courseId);
+  }
+
+  /**
+   * Returns all products which are read in one course of a university in a specific semester.
+   * @param courseId - id of the course
+   * @param sem - the semester
+   */
+  @Get('/course/:courseId/semester/:sem/products')
+  async getSemesterProductsById(
+    @Param('courseId') courseId: string,
+    @Param('sem') sem: string) {
+    return this.universityService.getSemesterProductsById(courseId, sem);
   }
 }

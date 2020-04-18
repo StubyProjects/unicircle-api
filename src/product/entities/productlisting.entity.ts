@@ -10,6 +10,7 @@ import {
 import { Image } from './image.entity';
 import { Condition } from './condition.entity';
 import { Product } from './product.entity';
+import { User } from '../../user/user.entity';
 
 @Entity()
 export class Productlisting extends BaseEntity {
@@ -25,8 +26,8 @@ export class Productlisting extends BaseEntity {
   price: string;
 
   @Index({ fulltext: true })
-  @Column()
-  userId: string;
+  @ManyToOne(type => User, user => user.productListings)
+  user: User;
 
   @ManyToOne(type => Condition, condition => condition.productListing)
   condition: Condition;

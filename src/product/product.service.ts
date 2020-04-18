@@ -56,8 +56,8 @@ export class ProductService {
     const { isbn, images, conditionName } = createProductInput;
 
     //checks if the general product and condition of the listing's product already exist and if not, creates them.
-    const newProduct = this.checkAndCreate(isbn, this.productsRepository, createProductInput);
-    const newCondition = this.checkAndCreate(conditionName, this.conditionRepository, createProductInput);
+    const newProduct = this.checkAndCreate(isbn, isbn, this.productsRepository, createProductInput);
+    const newCondition = this.checkAndCreate(name, conditionName, this.conditionRepository, createProductInput);
 
     const productListing = await this.productListingRepository.createProductListing(createProductInput, newProduct, newCondition, user);
     // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
@@ -69,10 +69,10 @@ export class ProductService {
   }
 
   // checks if the value is already in the database and if not, creates a new one.
-  async checkAndCreate(searchTerm, repository, values) {
-    let newValue = await this.conditionRepository.findOne({ where: { name: searchTerm } });
+  async checkAndCreate(searchValue, searchTerm, repository, values) {
+    let newValue = await repository.findOne({ where: { searchValue: searchTerm } });
     if (newValue == undefined) {
-      newValue = await this.conditionRepository.createCondition(values);
+      newValue = await repository.createEntity(values);
     }
     return newValue;
   }
@@ -139,9 +139,9 @@ export class ProductService {
       });
       //checks if there are more listings for this product and if not, the general product gets
       //deleted as well.
-      const productId = productListing.product;
-      if(this.wasLastListingFor(productId)) {
-        this.deleteProduct(productId);
+      const product = productListing.product;
+      if(this.wasLastListingFor(product)) {
+        this.deleteProduct(product);
       }
       return this.productListingRepository.delete(bookId);
     }
@@ -149,22 +149,22 @@ export class ProductService {
 
   /**
    * deletes the general product and all reviews associated to it.
-   * @param productId - the id of the product
+   * @param product - the product
    */
-  async deleteProduct(productId) {
-      const reviews = await this.reviewRepository.find({ where: { product: productId}});
+  async deleteProduct(product) {
+      const reviews = await this.reviewRepository.find({ where: { product: product}});
       reviews.forEach(review => {
         this.reviewRepository.deleteReview(review.id);
       });
-      return await this.productsRepository.delete(productId);
+      return await this.productsRepository.delete(product);
   }
 
   /**
    * Checks whether the deleted listing was the last one for the general product.
-   * @param productId - the id of the general product.
+   * @param product - the general product.
    */
-  async wasLastListingFor(productId): Promise<boolean> {
-    const lastListing = await this.productListingRepository.findOne({ where: { product: productId}});
+  async wasLastListingFor(product): Promise<boolean> {
+    const lastListing = await this.productListingRepository.findOne({ where: { product: product}});
     return !lastListing;
   }
 
@@ -184,7 +184,7 @@ export class ProductService {
    */
   async validateOwner(id, user): Promise<boolean> {
     const productListing = await this.productListingRepository.findOne(id);
-    if (productListing.userId !== user.sub) {
+    if (productListing.user.id !== user.sub) {
       throw new HttpException(
         'You do not own this product',
         HttpStatus.UNAUTHORIZED);

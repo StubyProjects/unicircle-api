@@ -3,6 +3,7 @@ import { Review } from '../review/review.entity';
 import { IsBoolean, IsString } from 'class-validator';
 import { University } from '../university/entities/university.entity';
 import { Semester } from '../university/entities/reading.entity';
+import { Productlisting } from '../product/entities/productlisting.entity';
 
 @Entity()
 export class User extends BaseEntity{
@@ -22,13 +23,17 @@ export class User extends BaseEntity{
   @IsString()
   semester: Semester;
 
+  @ManyToOne(type => University, university => university.students)
+  university: University;
+
   @OneToMany(type => Review, review => review.user)
   createdReviews: Review[];
 
   @OneToMany(type => Review, review => review.user)
   receivedReviews: Review[];
 
-  @ManyToOne(type => University, university => university.students)
-  university: University;
+  @OneToMany(type => Productlisting, productListing => productListing.user)
+  productListings: Productlisting[];
+
 
 }
