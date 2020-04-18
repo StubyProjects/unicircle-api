@@ -25,7 +25,6 @@ export class Productlisting extends BaseEntity {
   @Column()
   price: string;
 
-  @Index({ fulltext: true })
   @ManyToOne(type => User, user => user.productListings)
   user: User;
 

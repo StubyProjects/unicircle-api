@@ -37,7 +37,7 @@ export class UniversityService {
   }
 
   /**
-   * Gets all products of one courses of one university.
+   * Gets all products of one course of one university.
    * @param courseId - id of the course which is searched
    */
   async getCourseProductsById(courseId) {
