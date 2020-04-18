@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UniversityRepository } from './repositories/university.repository';
-import { ReadingRepository } from './repositories/reading.repository';
 import { CourseRepository } from './repositories/course.repository';
 import { ProductsRepository } from '../product/repositories/products.repository';
-import { getRepository } from 'typeorm';
 import { University } from './entities/university.entity';
 import { Course } from './entities/course.entity';
 
@@ -17,8 +15,6 @@ import { Course } from './entities/course.entity';
 export class UniversityService {
 
   constructor(@InjectRepository(UniversityRepository) private universityRepository: UniversityRepository,
-
-              @InjectRepository(ReadingRepository) private readingRepository: ReadingRepository,
 
               @InjectRepository(CourseRepository) private courseRepository: CourseRepository,
 
@@ -55,5 +51,28 @@ export class UniversityService {
    */
   async getSemesterProductsById(courseId, semester) {
     return this.courseRepository.getSemesterProductsById(courseId, semester);
+  }
+
+  /**
+   * Creates a new university
+   * @param name
+   * @param town
+   */
+  async createUniversity(name, town):Promise<University> {
+    return this.universityRepository.createUniversity(name, town);
+  }
+
+  /**
+   * Creates a new course
+   * @param name
+   * @param scienceType
+   * @param graduation
+   * @param universityId
+   */
+  async createCourse(name, scienceType, graduation, universityId) {
+    const university = await this.universityRepository.findOne(universityId);
+    const course = await this.courseRepository.createCourse(name, scienceType, graduation, university);
+    university.courses.push(course);
+    return course;
   }
  }

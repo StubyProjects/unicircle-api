@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne, Colum
 import { Review } from '../review/review.entity';
 import { IsBoolean, IsString } from 'class-validator';
 import { University } from '../university/entities/university.entity';
-import { Semester } from '../university/entities/reading.entity';
+import { Semester } from '../university/entities/course.entity';
 import { Productlisting } from '../product/entities/productlisting.entity';
 
 @Entity()

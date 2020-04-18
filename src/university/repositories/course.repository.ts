@@ -6,6 +6,7 @@
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Course } from '../entities/course.entity';
 import { ProductsRepository } from '../../product/repositories/products.repository';
+import { University } from '../entities/university.entity';
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {
@@ -34,5 +35,15 @@ export class CourseRepository extends Repository<Course> {
       .innerJoin("product.readings", "reading")
       .where("reading.semester = :semester", { semester: semester})
       .andWhere("reading.course.id = :courseId", { courseId: courseId})
+  }
+
+  async createCourse(name, scienceType, graduation, university): Promise<Course> {
+
+    const course = new Course();
+    course.name = name;
+    course.scienceType = scienceType;
+    course.graduation = graduation;
+    course.university = university;
+    return await this.save(course);
   }
 }
