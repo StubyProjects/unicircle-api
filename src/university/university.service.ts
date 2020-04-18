@@ -4,7 +4,6 @@ import { UniversityRepository } from './repositories/university.repository';
 import { ReadingRepository } from './repositories/reading.repository';
 import { CourseRepository } from './repositories/course.repository';
 import { ProductsRepository } from '../product/repositories/products.repository';
-import { getRepository } from 'typeorm';
 import { University } from './entities/university.entity';
 import { Course } from './entities/course.entity';
 
@@ -41,7 +40,7 @@ export class UniversityService {
   }
 
   /**
-   * Gets all products of one courses of one university.
+   * Gets all products of one course of one university.
    * @param courseId - id of the course which is searched
    */
   async getCourseProductsById(courseId) {

@@ -34,6 +34,4 @@ export class User extends BaseEntity{
 
   @OneToMany(type => Productlisting, productListing => productListing.user)
   productListings: Productlisting[];
-
-
 }

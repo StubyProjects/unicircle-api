@@ -1,4 +1,4 @@
-import { EntityRepository, Like, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Productlisting } from '../entities/productlisting.entity';
 import {CreateProductInput} from "../dto/create-product.input";
 
@@ -18,7 +18,7 @@ export class ProductlistingRepository extends Repository<Productlisting> {
         productListing.price = price;
         productListing.product = existingProduct;
         productListing.condition = newCondition;
-        productListing.userId = user.sub;
+        productListing.user = user.sub;
         await this.save(productListing);
         return productListing;
     }

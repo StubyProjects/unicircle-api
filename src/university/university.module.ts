@@ -5,9 +5,10 @@ import { ReadingRepository } from './repositories/reading.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UniversityService } from './university.service';
 import { UniversityController } from './university.controller';
+import { ProductsRepository } from '../product/repositories/products.repository';
 
 @Module({ imports: [
-    TypeOrmModule.forFeature([UniversityRepository, CourseRepository, ReadingRepository]),
+    TypeOrmModule.forFeature([UniversityRepository, CourseRepository, ReadingRepository, ProductsRepository]),
     HttpModule
   ],
   providers: [
