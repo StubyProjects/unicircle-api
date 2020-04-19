@@ -6,7 +6,6 @@
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Course } from '../entities/course.entity';
 import { ProductsRepository } from '../../product/repositories/products.repository';
-import { University } from '../entities/university.entity';
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {

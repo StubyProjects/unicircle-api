@@ -11,11 +11,12 @@ export class ProductsRepository extends Repository<Product> {
      * @param createProductInput - the attributes which are needed to create the product.
      */
     async createEntity(createProductInput: CreateProductInput) {
-        const { title, isbn, description, author, listPrice, imageUrl, category } = createProductInput;
+        const { title, isbn10, isbn13, description, author, listPrice, imageUrl, category } = createProductInput;
 
         const product = new Product();
         product.title = title;
-        product.isbn = isbn;
+        product.isbn10 = isbn10;
+        product.isbn13 = isbn13;
         product.description = description;
         product.author = author;
         product.listPrice = listPrice;

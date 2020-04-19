@@ -13,7 +13,11 @@ export class Product extends BaseEntity {
 
   @Index({ fulltext: true })
   @Column()
-  isbn: string;
+  isbn10: string;
+
+  @Index({ fulltext: true })
+  @Column()
+  isbn13: string;
 
   @Index({ fulltext: true })
   @Column()

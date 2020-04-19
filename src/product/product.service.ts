@@ -8,7 +8,7 @@ import { ProductsRepository } from './repositories/products.repository';
 import { ProductlistingRepository } from './repositories/productlisting.repository';
 import { CreateProductInput } from './dto/create-product.input';
 import { Product } from './entities/product.entity';
-import { DeleteResult, Like } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { map } from 'rxjs/operators';
 import { Productlisting } from './entities/productlisting.entity';
@@ -53,10 +53,10 @@ export class ProductService {
    * @param user
    */
   async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
-    const { isbn, images, conditionName } = createProductInput;
+    const { isbn10, isbn13, images, conditionName } = createProductInput;
 
     //checks if the general product and condition of the listing's product already exist and if not, creates them.
-    const newProduct = this.checkAndCreate(isbn, isbn, this.productsRepository, createProductInput);
+    const newProduct = this.checkAndCreate(isbn10, isbn13, this.productsRepository, createProductInput);
     const newCondition = this.checkAndCreate(name, conditionName, this.conditionRepository, createProductInput);
 
     const productListing = await this.productListingRepository.createProductListing(createProductInput, newProduct, newCondition, user);

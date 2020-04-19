@@ -7,7 +7,10 @@ export class CreateProductInput {
   title: string;
 
   @IsString()
-  isbn: string;
+  isbn10: string;
+
+  @IsString()
+  isbn13: string;
 
   @IsString()
   description: string;
