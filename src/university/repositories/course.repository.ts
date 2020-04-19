@@ -4,8 +4,9 @@
  * @version (17.04.2020)
  */
 import { EntityRepository, getRepository, Repository } from 'typeorm';
-import { Course } from '../entities/course.entity';
+import { Course, GraduationType, Semester } from '../entities/course.entity';
 import { ProductsRepository } from '../../product/repositories/products.repository';
+import { University } from '../entities/university.entity';
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {
@@ -14,7 +15,7 @@ export class CourseRepository extends Repository<Course> {
    * Makes a call to the database to retrieve all products which are related to a specific course
    * @param courseId - the specified course (it's id)
    */
-  async getCourseProductsById(courseId) {
+  async getCourseProductsById(courseId:string) {
     return getRepository(ProductsRepository)
       .createQueryBuilder("product")
       .innerJoin("product.readings", "reading")
@@ -27,7 +28,7 @@ export class CourseRepository extends Repository<Course> {
    * @param courseId - the id of the course
    * @param semester - the semester (number)
    */
-  async getSemesterProductsById(courseId, semester) {
+  async getSemesterProductsById(courseId: string, semester: Semester) {
 
     return getRepository(ProductsRepository)
       .createQueryBuilder("product")
@@ -36,11 +37,10 @@ export class CourseRepository extends Repository<Course> {
       .andWhere("reading.course.id = :courseId", { courseId: courseId})
   }
 
-  async createCourse(name, scienceType, graduation, university): Promise<Course> {
+  async createCourse(name:string, graduation: GraduationType, university: University): Promise<Course> {
 
     const course = new Course();
     course.name = name;
-    course.scienceType = scienceType;
     course.graduation = graduation;
     course.university = university;
     return await this.save(course);

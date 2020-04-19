@@ -1,6 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Productlisting } from '../entities/productlisting.entity';
 import {CreateProductInput} from "../dto/create-product.input";
+import { Product } from '../entities/product.entity';
 
 @EntityRepository(Productlisting)
 export class ProductlistingRepository extends Repository<Productlisting> {
@@ -11,7 +12,7 @@ export class ProductlistingRepository extends Repository<Productlisting> {
      * @param existingProduct
      * @param newCondition - the condition in which the product is in
      */
-    async createProductListing(createProductInput: CreateProductInput, existingProduct, newCondition, user) {
+    async createProductListing(createProductInput: CreateProductInput, existingProduct: Product, newCondition, user) {
         const { price } = createProductInput;
         const productListing = new Productlisting();
         productListing.createdAt = Date.now().toString();

@@ -2,7 +2,8 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { Product } from '../product/entities/product.entity';
 import { University } from './entities/university.entity';
-import { Course } from './entities/course.entity';
+import { Course, GraduationType, Semester } from './entities/course.entity';
+import { Reading } from './entities/reading.entity';
 
 /**
  * Controller API which handles requests from the client related to university stuff.
@@ -48,7 +49,7 @@ export class UniversityController {
   @Get('/course/:courseId/semester/:sem/products')
   async getSemesterProductsById(
     @Param('courseId') courseId: string,
-    @Param('sem') sem: string) {
+    @Param('sem') sem: Semester) {
     return this.universityService.getSemesterProductsById(courseId, sem);
   }
 
@@ -64,7 +65,7 @@ export class UniversityController {
   }
 
   /**
-   * Creates a new course
+   * Creates a new course. Should only be called AFTER(!) the relating university is created in the database.
    * @param name
    * @param scienceType
    * @param graduation
@@ -72,9 +73,22 @@ export class UniversityController {
    */
   @Post('/course/create')
   async createCourse(@Body('name') name: string,
-                     @Body('scienceType') scienceType: string,
-                     @Body('graduation') graduation: string,
+                     @Body('graduation') graduation: GraduationType,
                      @Body('universityId') universityId: string): Promise<Course> {
-    return this.universityService.createCourse(name, scienceType,graduation, universityId);
+    return this.universityService.createCourse(name, graduation, universityId);
+  }
+
+  /**
+   * Creates a new reading in the database. Should be called AFTER(!) the relating course and the
+   * relating product are created in the database.
+   * @param semester
+   * @param productId
+   * @param courseId
+   */
+  @Post('/course/:courseId/readings')
+  async createReading(@Body('semester') semester: Semester,
+                     @Body('productId') productId: string,
+                     @Param('courseId') courseId: string,): Promise<Reading> {
+    return this.universityService.createReading(semester, productId, courseId);
   }
 }

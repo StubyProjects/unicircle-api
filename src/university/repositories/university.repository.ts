@@ -11,7 +11,7 @@ import { CourseRepository } from './course.repository';
 @EntityRepository(University)
 export class UniversityRepository extends Repository<University> {
 
-  async createUniversity(name, town): Promise<University> {
+  async createUniversity(name: string, town: string): Promise<University> {
 
     const university = new University();
     university.name = name;

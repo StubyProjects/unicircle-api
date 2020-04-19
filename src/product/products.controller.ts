@@ -25,7 +25,7 @@ export class ProductsController {
 
 
   @Get()
-  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('page') page): Promise<Product[]> {
+  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('page') page: number): Promise<Product[]> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);

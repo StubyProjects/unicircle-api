@@ -19,15 +19,15 @@ export class ReviewService {
     return await this.reviewRepository.createReview(createReviewInput, author);
   }
 
-  async getAllReviewsById(id): Promise<Review[]> {
+  async getAllReviewsById(id: string): Promise<Review[]> {
     return await this.reviewRepository.getAllReviewsById(id);
   }
 
-  async updateReview(id, updateReviewInput: UpdateReviewInput): Promise<UpdateResult> {
+  async updateReview(id: string, updateReviewInput: UpdateReviewInput): Promise<UpdateResult> {
     return await this.reviewRepository.updateReview(id, updateReviewInput);
   }
 
-  async deleteReview(id): Promise<DeleteResult> {
+  async deleteReview(id: string): Promise<DeleteResult> {
     return await this.reviewRepository.deleteReview(id);
   }
 }

@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsRepository } from './repositories/products.repository';
 import { ProductlistingRepository } from './repositories/productlisting.repository';
-import { CreateProductInput } from './dto/create-product.input';
+import { CreateProductInput, UpdateProductInput } from './dto/create-product.input';
 import { Product } from './entities/product.entity';
 import { DeleteResult } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
@@ -15,6 +15,7 @@ import { Productlisting } from './entities/productlisting.entity';
 import { ImagesRepository } from './repositories/images.repository';
 import { ConditionsRepository } from './repositories/conditions.repository';
 import { ReviewRepository } from '../review/review.repository';
+import { Condition } from './entities/condition.entity';
 
 /**
  * Service which handles database calls related to all product.
@@ -56,10 +57,10 @@ export class ProductService {
     const { isbn10, isbn13, images, conditionName } = createProductInput;
 
     //checks if the general product and condition of the listing's product already exist and if not, creates them.
-    const newProduct = this.checkAndCreate(isbn10, isbn13, this.productsRepository, createProductInput);
-    const newCondition = this.checkAndCreate(name, conditionName, this.conditionRepository, createProductInput);
+    const newProduct = await this.getOrCreateProduct(isbn10, isbn13, createProductInput);
+    const newCondition = await this.getOrCreateCondition(conditionName, createProductInput);
 
-    const productListing = await this.productListingRepository.createProductListing(createProductInput, newProduct, newCondition, user);
+    const productListing = await this.productListingRepository.createProductListing(createProductInput,newProduct, newCondition, user);
     // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
     await images.forEach(image => {
       image.productListing = productListing;
@@ -68,13 +69,22 @@ export class ProductService {
     return productListing;
   }
 
-  // checks if the value is already in the database and if not, creates a new one.
-  async checkAndCreate(searchValue, searchTerm, repository, values) {
-    let newValue = await repository.findOne({ where: { searchValue: searchTerm } });
-    if (newValue == undefined) {
-      newValue = await repository.createEntity(values);
+  // checks if the product is already in the database and if not, creates a new one.
+  async getOrCreateProduct(isbn10: string,isbn13: string, values: CreateProductInput): Promise<Product> {
+    let newProduct = await this.productsRepository.findOne({ where: [{ isbn10: isbn10 }, { isbn13: isbn13}] });
+    if (newProduct == undefined) {
+      newProduct = await this.productsRepository.createEntity(values);
     }
-    return newValue;
+    return newProduct;
+  }
+
+  // checks if the condition is already in the database and if not, creates a new one.
+  async getOrCreateCondition(searchTerm: string, values: CreateProductInput): Promise<Condition> {
+    let newCondition = await this.conditionRepository.findOne({ where: { name: searchTerm } });
+    if (newCondition == undefined) {
+      newCondition = await this.conditionRepository.createEntity(values);
+    }
+    return newCondition;
   }
 
   //returns one product with the specified id.
@@ -101,7 +111,7 @@ export class ProductService {
    * search algorithm for the products.
    * @param searchTerm - self explanatory.
    */
-  async getBySearch(searchTerm) {
+  async getBySearch(searchTerm: string) {
     const products: Product[] = await this.productsRepository.findBySearch(searchTerm);
     if (products.length == 0) {
       return this.googleBookSearch(searchTerm);
@@ -116,7 +126,7 @@ export class ProductService {
    * @param updateProductInput - all the fields which should be updated
    * @param user - the user who wants to make the update
    */
-  async updateProduct(id, updateProductInput, user): Promise<Productlisting> {
+  async updateProduct(id: string, updateProductInput: UpdateProductInput, user): Promise<Productlisting> {
     if (this.validateOwner(id, user)) {
       await this.productListingRepository.update(id, updateProductInput);
       return await this.productListingRepository.findOne(id);
@@ -128,7 +138,7 @@ export class ProductService {
    * @param bookId - id of the product
    * @param user - the user who wants to make the delete.
    */
-  async deleteProductListing(bookId, user): Promise<DeleteResult> {
+  async deleteProductListing(bookId: string, user): Promise<DeleteResult> {
     if (this.validateOwner(bookId, user)) {
       const productListing = await this.productListingRepository.findOne(bookId);
 
@@ -151,7 +161,7 @@ export class ProductService {
    * deletes the general product and all reviews associated to it.
    * @param product - the product
    */
-  async deleteProduct(product) {
+  async deleteProduct(product: Product) {
       const reviews = await this.reviewRepository.find({ where: { product: product}});
       reviews.forEach(review => {
         this.reviewRepository.deleteReview(review.id);
@@ -163,7 +173,7 @@ export class ProductService {
    * Checks whether the deleted listing was the last one for the general product.
    * @param product - the general product.
    */
-  async wasLastListingFor(product): Promise<boolean> {
+  async wasLastListingFor(product: Product): Promise<boolean> {
     const lastListing = await this.productListingRepository.findOne({ where: { product: product}});
     return !lastListing;
   }
@@ -172,7 +182,7 @@ export class ProductService {
    * If a user searches a book which isn't in our database, it gets searched for in the google Books database.
    * @param searchTerm - how the user searches for the book, e.g. ISBN , title, author, etc.
    */
-  async googleBookSearch(searchTerm) {
+  async googleBookSearch(searchTerm: string) {
     return this.http.get('https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&key=' + this.bookAPIKey)
       .pipe(map(response => response.data));
   }
@@ -182,7 +192,7 @@ export class ProductService {
    * @param id - id of the product
    * @param user - user who is getting validated
    */
-  async validateOwner(id, user): Promise<boolean> {
+  async validateOwner(id: string, user): Promise<boolean> {
     const productListing = await this.productListingRepository.findOne(id);
     if (productListing.user.id !== user.sub) {
       throw new HttpException(
