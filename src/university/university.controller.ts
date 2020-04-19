@@ -68,7 +68,7 @@ export class UniversityController {
    * Creates a new course. Should only be called AFTER(!) the relating university is created in the database.
    * @param name
    * @param scienceType
-   * @param graduation
+   * @param graduation - "BACHELOR" or "MASTER"
    * @param universityId
    */
   @Post('/course/create')

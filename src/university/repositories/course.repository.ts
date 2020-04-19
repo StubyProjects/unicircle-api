@@ -5,8 +5,8 @@
  */
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Course, GraduationType, Semester } from '../entities/course.entity';
-import { ProductsRepository } from '../../product/repositories/products.repository';
 import { University } from '../entities/university.entity';
+import { Product } from '../../product/entities/product.entity';
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {
@@ -16,10 +16,11 @@ export class CourseRepository extends Repository<Course> {
    * @param courseId - the specified course (it's id)
    */
   async getCourseProductsById(courseId:string) {
-    return getRepository(ProductsRepository)
+    return getRepository(Product)
       .createQueryBuilder("product")
       .innerJoin("product.readings", "reading")
-      .where("reading.course.id = :courseId", { courseId: courseId });
+      .where("reading.course.id = :courseId", { courseId: courseId })
+      .getMany();
   }
 
   /**
@@ -30,11 +31,12 @@ export class CourseRepository extends Repository<Course> {
    */
   async getSemesterProductsById(courseId: string, semester: Semester) {
 
-    return getRepository(ProductsRepository)
+    return getRepository(Product)
       .createQueryBuilder("product")
       .innerJoin("product.readings", "reading")
       .where("reading.semester = :semester", { semester: semester})
       .andWhere("reading.course.id = :courseId", { courseId: courseId})
+      .getMany()
   }
 
   async createCourse(name:string, graduation: GraduationType, university: University): Promise<Course> {
