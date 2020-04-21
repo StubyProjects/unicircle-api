@@ -1,5 +1,7 @@
-import { Controller, Get, HttpService, Param } from '@nestjs/common';
+import { Body, Controller, Get, HttpService, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
+import { CreateUserInput } from './dto/create-user.input';
+import { User } from './user.entity';
 
 /**
  * User API which handles requests from the client related to the users.
@@ -18,5 +20,10 @@ export class UserController {
   @Get('/:id')
   async getUserById(@Param('id') id: string) {
     return this.userService.getUserById(id);
+  }
+
+  @Post('create')
+  async createUser(@Body() createUserInput: CreateUserInput): Promise<User> {
+    return this.userService.createUser(createUserInput);
   }
 }

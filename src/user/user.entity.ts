@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne, Colum
 import { Review } from '../review/review.entity';
 import { IsBoolean, IsString } from 'class-validator';
 import { University } from '../university/entities/university.entity';
-import { Semester } from '../university/entities/course.entity';
+import { Course, Semester } from '../university/entities/course.entity';
 import { Productlisting } from '../product/entities/productlisting.entity';
 
 @Entity()
@@ -23,8 +23,8 @@ export class User extends BaseEntity{
   @IsString()
   semester: Semester;
 
-  @ManyToOne(type => University, university => university.students)
-  university: University;
+  @ManyToOne(type => Course, course => course.students)
+  course: Course;
 
   @OneToMany(type => Review, review => review.user)
   createdReviews: Review[];

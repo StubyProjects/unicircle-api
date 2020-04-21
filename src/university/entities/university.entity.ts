@@ -17,9 +17,6 @@ export class University extends BaseEntity{
   @IsString()
   town: string;
 
-  @OneToMany(type => User, user => user.university)
-  students: User[];
-
   @OneToMany(type => Course, course => course.university)
   courses: Course[];
 }

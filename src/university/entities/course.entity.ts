@@ -2,16 +2,14 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsString } from 'class-validator';
 import { University } from './university.entity';
-import { Product } from '../../product/entities/product.entity';
 import { Reading } from './reading.entity';
+import { User } from '../../user/user.entity';
 
 @Entity()
 export class Course extends BaseEntity{
@@ -32,6 +30,9 @@ export class Course extends BaseEntity{
 
   @OneToMany(type => Reading, reading => reading.course)
   readings: Reading[];
+
+  @OneToMany(type => User, user => user.course)
+  students: User[];
 }
 
 export enum GraduationType {

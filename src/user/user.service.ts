@@ -1,4 +1,9 @@
 import { HttpService, Injectable } from '@nestjs/common';
+import { CreateUserInput } from './dto/create-user.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from './user.repository';
+import { User } from './user.entity';
+import { getRepository } from 'typeorm';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -8,8 +13,7 @@ import { HttpService, Injectable } from '@nestjs/common';
 @Injectable()
 export class UserService {
 
-  constructor(private http: HttpService) {
-  }
+  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository, private http: HttpService) {}
 
   /**
    * Retrieves the bearer token from auth0 and then returns it.
@@ -39,5 +43,9 @@ export class UserService {
     };
     const user = await this.http.get(process.env.AUTH0_API + 'users/' + id, { headers: headers }).toPromise();
     return user.data;
+  }
+
+  async createUser(createUserInput: CreateUserInput): Promise<User> {
+    return this.userRepository.createUser(createUserInput);
   }
 }
