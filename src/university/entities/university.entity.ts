@@ -1,5 +1,4 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from '../../user/user.entity';
 import { IsString } from 'class-validator';
 import { Course } from './course.entity';
 

@@ -15,7 +15,7 @@ export class ReviewRepository extends Repository<Review> {
    * @param author
    */
   async createReview(createReviewInput: CreateReviewInput, author): Promise<Review> {
-    const { createdAt, rating, text, title, product, user } = createReviewInput;
+    const { createdAt, rating, text, title, product, userId } = createReviewInput;
 
     const review = new Review();
 
@@ -23,12 +23,12 @@ export class ReviewRepository extends Repository<Review> {
     review.rating = rating;
     review.title = title;
     review.text = text;
-    review.author = author.sub;
+    review.authorId = author.sub;
     if(product){
       review.product = product;
     }
     else {
-      review.user = user;
+      review.userId = userId;
     }
     return review;
   }

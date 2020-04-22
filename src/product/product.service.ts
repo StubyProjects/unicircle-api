@@ -194,7 +194,7 @@ export class ProductService {
    */
   async validateOwner(id: string, user): Promise<boolean> {
     const productListing = await this.productListingRepository.findOne(id);
-    if (productListing.user.id !== user.sub) {
+    if (productListing.userId !== user.sub) {
       throw new HttpException(
         'You do not own this product',
         HttpStatus.UNAUTHORIZED);

@@ -19,7 +19,7 @@ export class ProductlistingRepository extends Repository<Productlisting> {
         productListing.price = price;
         productListing.product = existingProduct;
         productListing.condition = newCondition;
-        productListing.user = user.sub;
+        productListing.userId = user.sub;
         await this.save(productListing);
         return productListing;
     }

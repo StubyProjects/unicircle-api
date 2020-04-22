@@ -10,7 +10,7 @@ import {
 import { Image } from './image.entity';
 import { Condition } from './condition.entity';
 import { Product } from './product.entity';
-import { User } from '../../user/user.entity';
+import { IsString } from 'class-validator';
 
 @Entity()
 export class Productlisting extends BaseEntity {
@@ -25,8 +25,8 @@ export class Productlisting extends BaseEntity {
   @Column()
   price: string;
 
-  @ManyToOne(type => User, user => user.productListings)
-  user: User;
+  @IsString()
+  userId: string;
 
   @ManyToOne(type => Condition, condition => condition.productListing)
   condition: Condition;

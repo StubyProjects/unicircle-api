@@ -1,6 +1,5 @@
 import { IsDate, IsString } from 'class-validator';
 import { Product } from '../../product/entities/product.entity';
-import { User } from '../../user/user.entity';
 
 export class CreateReviewInput {
 
@@ -18,7 +17,8 @@ export class CreateReviewInput {
 
   product: Product;
 
-  user: User;
+  @IsString()
+  userId: string;
 
 }
 

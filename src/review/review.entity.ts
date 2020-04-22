@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity,ManyToOne } from 'typeorm';
 import { IsDate, IsString } from 'class-validator';
 import { Product } from '../product/entities/product.entity';
-import { User } from '../user/user.entity';
 
 @Entity()
 export class Review extends BaseEntity{
@@ -25,12 +24,14 @@ export class Review extends BaseEntity{
   @Column()
   rating: string;
 
-  @ManyToOne(type => User, user => user.createdReviews)
-  author: User;
+  @IsString()
+  @Column()
+  authorId: string;
 
   //User (Seller) about who the review is written
-  @ManyToOne(type => User, user => user.receivedReviews)
-  user: User;
+  @IsString()
+  @Column()
+  userId: string;
 
   // OR
 
