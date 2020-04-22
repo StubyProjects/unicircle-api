@@ -30,11 +30,12 @@ export class ReviewRepository extends Repository<Review> {
     else {
       review.userId = userId;
     }
+    await review.save();
     return review;
   }
 
   async getAllReviewsById(id): Promise<Review[]> {
-    return await this.find({where:[{ product: id},{ user: id}]});
+    return await this.find({where:[{ product: id},{ userId: id}]});
   }
 
   async updateReview(id, updateReviewInput: UpdateReviewInput): Promise<UpdateResult> {

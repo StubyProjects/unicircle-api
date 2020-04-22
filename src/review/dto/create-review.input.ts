@@ -3,7 +3,7 @@ import { Product } from '../../product/entities/product.entity';
 
 export class CreateReviewInput {
 
-  @IsDate()
+  @IsString()
   createdAt: string;
 
   @IsString()

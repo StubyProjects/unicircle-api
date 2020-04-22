@@ -3,8 +3,9 @@ import { UniversityRepository } from './repositories/university.repository';
 import { CourseRepository } from './repositories/course.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UniversityService } from './university.service';
-import { UniversityController } from './university.controller';
+import { UniversityController } from './controllers/university.controller';
 import { ProductsRepository } from '../product/repositories/products.repository';
+import { CourseController } from './controllers/course.controller';
 
 @Module({ imports: [
     TypeOrmModule.forFeature([UniversityRepository, CourseRepository, ProductsRepository]),
@@ -13,6 +14,6 @@ import { ProductsRepository } from '../product/repositories/products.repository'
   providers: [
     UniversityService,
   ],
-  controllers: [UniversityController],
+  controllers: [UniversityController, CourseController],
 })
 export class UniversityModule {}

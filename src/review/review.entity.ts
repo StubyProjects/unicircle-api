@@ -8,7 +8,7 @@ export class Review extends BaseEntity{
   @PrimaryGeneratedColumn()
   id: string;
 
-  @IsDate()
+  @IsString()
   @Column()
   createdAt: string;
 

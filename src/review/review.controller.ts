@@ -32,7 +32,7 @@ export class ReviewController {
   }
 
   /**
-   * Gets all reviews of a product or a seller by its id.
+   * Gets all reviews about a product or a seller by its id.
    * @param id - the id of a product or a seller.
    */
   @Get('/:id')
