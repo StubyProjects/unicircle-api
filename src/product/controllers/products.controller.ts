@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductInput } from './dto/create-product.input';
+import { ProductService } from '../product.service';
+import { CreateProductInput } from '../dto/create-product.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
-import { GetProductsFilterDto } from './dto/get-products-filter.dto';
-import { UpdateProductInput } from './dto/create-product.input';
-import { User } from '../custom-decorators/user.decorator';
-import { UserModel as UserEntity} from '../types/user.model';
-import { Product } from './entities/product.entity';
-import { Productlisting } from './entities/productlisting.entity';
+import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
+import { UpdateProductInput } from '../dto/create-product.input';
+import { User } from '../../custom-decorators/user.decorator';
+import { UserModel as UserEntity} from '../../types/user.model';
+import { Product } from '../entities/product.entity';
+import { Productlisting } from '../entities/productlisting.entity';
 
 /**
  * Controller for the product. Communicates with the frontend Client application.
@@ -22,7 +22,6 @@ import { Productlisting } from './entities/productlisting.entity';
 export class ProductsController {
 
   constructor(private productService: ProductService) {}
-
 
   @Get()
   async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('page') page: number): Promise<Product[]> {

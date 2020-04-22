@@ -5,8 +5,9 @@ import { ProductlistingRepository} from './repositories/productlisting.repositor
 import { ImagesRepository} from './repositories/images.repository';
 import { ConditionsRepository} from './repositories/conditions.repository';
 import { ProductService } from './product.service';
-import { ProductsController } from './products.controller';
 import { ReviewRepository } from '../review/review.repository';
+import { ProductsController } from './controllers/products.controller';
+import { ConditionController } from './controllers/condition.controller';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { ReviewRepository } from '../review/review.repository';
   providers: [
     ProductService,
   ],
-  controllers: [ProductsController],
+  controllers: [ProductsController, ConditionController],
 })
 export class ProductsModule {}

@@ -87,6 +87,10 @@ export class ProductService {
     return newCondition;
   }
 
+  async getConditions(): Promise<Condition[]> {
+    return await this.conditionRepository.find();
+  }
+
   //returns one product with the specified id.
   async findOneById(id: string): Promise<Product> {
     return this.productsRepository.findOne(id);
