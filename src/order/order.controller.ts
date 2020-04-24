@@ -30,7 +30,7 @@ export class OrderController {
   /**
    * Creates a new order in the database. User has to be authenticated ( Logged in with auth0 )
    * to do this operation.
-   * @param createOrderInput - the data about the order ( products, total price etc.)
+   * @param createOrderInput - the data about the order ( date of creation and the ids of the included listings)
    * @param user - the user which has taken the order.
    */
   @UseGuards(AuthGuard('jwt'))
