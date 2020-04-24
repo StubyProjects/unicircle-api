@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { Productlisting } from '../product/entities/productlisting.entity';
 
 @Entity()
@@ -16,10 +16,12 @@ export class Order extends BaseEntity{
   @Column()
   buyerId: string;
 
-  @IsString()
+  //total price of the order
+  @IsNumber()
   @Column()
-  total: string;
+  total: number;
 
+  //all productListings which are included into the order
   @OneToMany(type => Productlisting, productListing => productListing.order)
   productListings: Productlisting[];
 }

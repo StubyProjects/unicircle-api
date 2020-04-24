@@ -22,9 +22,8 @@ export class Productlisting extends BaseEntity {
   @Column()
   createdAt: string;
 
-  @Index({ fulltext: true })
   @Column()
-  price: string;
+  price: number;
 
   @IsString()
   @Column()

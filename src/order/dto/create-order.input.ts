@@ -6,11 +6,9 @@ export class CreateOrderInput {
   @IsString()
   date: string;
 
-  @IsString()
-  total: string;
-
+  // Just contains the id of the productListings.
   @IsArray()
-  productListings: Productlisting[];
+  productListingIds: Productlisting[];
 }
 
 export type UpdateOrderInput = Partial<CreateOrderInput>;

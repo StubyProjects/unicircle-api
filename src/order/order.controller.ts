@@ -37,7 +37,7 @@ export class OrderController {
   @Post()
   async createOrder(
     @Body() createOrderInput: CreateOrderInput,
-    @User() user: UserEntity) {
+    @User() user: UserEntity): Promise<Order> {
     return this.orderService.createOrder(createOrderInput, user);
 
   }

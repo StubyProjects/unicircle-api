@@ -1,4 +1,4 @@
-import { IsArray, IsString, MinLength } from 'class-validator';
+import { IsArray, IsNumber, IsString, MinLength } from 'class-validator';
 import { conditionName } from '../entities/condition.entity';
 import { Image } from '../entities/image.entity';
 export class CreateProductInput {
@@ -21,8 +21,8 @@ export class CreateProductInput {
   @IsString()
   listPrice: string;
 
-  @IsString()
-  price: string;
+  @IsNumber()
+  price: number;
 
   @IsString()
   imageUrl: string;

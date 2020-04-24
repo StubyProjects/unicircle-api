@@ -28,7 +28,7 @@ export class OrderService {
    * @param createOrderInput - the data about the order
    * @param user - the user who has taken the order
    */
-  async createOrder(createOrderInput: CreateOrderInput, user: UserEntity) {
+  async createOrder(createOrderInput: CreateOrderInput, user: UserEntity): Promise<Order> {
     return await this.orderRepository.createOrder(createOrderInput, user);
   }
 }
