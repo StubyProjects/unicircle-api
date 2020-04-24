@@ -5,6 +5,7 @@ import { AuthzModule } from './authz/authz.module';
 import { ReviewModule } from './review/review.module';
 import { UniversityModule } from './university/university.module';
 import { MangopayModule } from './mangopay/mangopay.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MangopayModule } from './mangopay/mangopay.module';
     ReviewModule,
     UniversityModule,
     MangopayModule,
+    OrderModule,
   ]
 })
 export class AppModule {}

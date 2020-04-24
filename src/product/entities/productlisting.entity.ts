@@ -11,6 +11,7 @@ import { Image } from './image.entity';
 import { Condition } from './condition.entity';
 import { Product } from './product.entity';
 import { IsString } from 'class-validator';
+import { Order } from '../../order/order.entity';
 
 @Entity()
 export class Productlisting extends BaseEntity {
@@ -37,4 +38,8 @@ export class Productlisting extends BaseEntity {
 
   @ManyToOne(type => Product, condition => condition.productListings)
   product: Product;
+
+  // Is NULL until product gets bought
+  @ManyToOne(type => Order, order => order.productListings)
+  order: Order;
 }
