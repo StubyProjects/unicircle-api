@@ -16,6 +16,7 @@ import { ImagesRepository } from './repositories/images.repository';
 import { ConditionsRepository } from './repositories/conditions.repository';
 import { ReviewRepository } from '../review/review.repository';
 import { Condition } from './entities/condition.entity';
+import { MangopayService } from '../mangopay/mangopay.service';
 
 /**
  * Service which handles database calls related to all product.
@@ -41,7 +42,9 @@ export class ProductService {
       @InjectRepository(ReviewRepository)
       private reviewRepository: ReviewRepository,
 
-      private http: HttpService) {
+      private http: HttpService,
+
+      private mangopay: MangopayService) {
   }
 
   /*API Key for Google Books*/
@@ -88,6 +91,19 @@ export class ProductService {
   }
 
   async getConditions(): Promise<Condition[]> {
+
+    this.mangopay.getClient().Users.create({
+      PersonType: "NATURAL",
+      FirstName: "John",
+      LastName: "Smith",
+      Birthday: 1300186358,
+      Nationality: "FR",
+      CountryOfResidence: "GB",
+      Email: "jab@stabilinger.eu",
+    }).then(function (response) {
+      console.log("Natural user created", response);
+    });
+
     return await this.conditionRepository.find();
   }
 

@@ -15,8 +15,7 @@ import { UserModel as UserEntity } from '../types/user.model';
 @Controller('order')
 export class OrderController {
 
-  constructor(private orderService: OrderService) {
-  }
+  constructor(private orderService: OrderService) {}
 
   /**
    * returns a order from the database by it's id.
@@ -39,7 +38,6 @@ export class OrderController {
     @Body() createOrderInput: CreateOrderInput,
     @User() user: UserEntity): Promise<Order> {
     return this.orderService.createOrder(createOrderInput, user);
-
   }
 
 }

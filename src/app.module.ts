@@ -4,7 +4,6 @@ import { ProductsModule } from './product/products.module';
 import { AuthzModule } from './authz/authz.module';
 import { ReviewModule } from './review/review.module';
 import { UniversityModule } from './university/university.module';
-import { MangopayModule } from './mangopay/mangopay.module';
 import { OrderModule } from './order/order.module';
 
 @Module({
@@ -14,7 +13,6 @@ import { OrderModule } from './order/order.module';
     ProductsModule,
     ReviewModule,
     UniversityModule,
-    MangopayModule,
     OrderModule,
   ]
 })
