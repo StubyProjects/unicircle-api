@@ -9,6 +9,9 @@ export class CreateProductInput {
   title: string;
 
   @IsString()
+  subtitle: string;
+
+  @IsString()
   isbn10: string;
 
   @IsString()

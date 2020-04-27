@@ -12,12 +12,13 @@ export class ProductsRepository extends Repository<Product> {
    */
   async createEntity(createProductInput: CreateProductInput) {
     const {
-      title, isbn10, isbn13, description, listPrice,
+      title, subtitle, isbn10, isbn13, description, listPrice,
       imageUrl
     } = createProductInput;
 
     const product = new Product();
     product.title = title;
+    product.subtitle = subtitle;
     product.isbn10 = isbn10;
     product.isbn13 = isbn13;
     product.description = description;

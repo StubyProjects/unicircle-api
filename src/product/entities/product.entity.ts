@@ -16,6 +16,10 @@ export class Product extends BaseEntity {
 
   @Index({ fulltext: true })
   @Column()
+  subtitle: string;
+
+  @Index({ fulltext: true })
+  @Column()
   isbn10: string;
 
   @Index({ fulltext: true })
