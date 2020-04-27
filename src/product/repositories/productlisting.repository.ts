@@ -15,7 +15,7 @@ export class ProductlistingRepository extends Repository<Productlisting> {
     async createProductListing(createProductInput: CreateProductInput, existingProduct: Product, newCondition, user) {
         const { price } = createProductInput;
         const productListing = new Productlisting();
-        productListing.createdAt = Date.now().toString();
+        productListing.createdAt = new Date(Date.now()).toLocaleString();
         productListing.price = price;
         productListing.product = existingProduct;
         productListing.condition = newCondition;

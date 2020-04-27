@@ -17,7 +17,7 @@ export class OrderRepository extends Repository<Order> {
    * @param user - the user which has taken the order
    */
   async createOrder(createOrderInput: CreateOrderInput, user): Promise<Order> {
-    const { date, productListingIds} = createOrderInput;
+    const { productListingIds} = createOrderInput;
 
     const productListings = [];
     let total = 0;
@@ -31,7 +31,7 @@ export class OrderRepository extends Repository<Order> {
 
     const order = new Order();
     order.buyerId = user.sub;
-    order.date = date;
+    order.date = new Date(Date.now()).toLocaleString();
     order.total = total;
     order.productListings = productListings;
     await order.save();
