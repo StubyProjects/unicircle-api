@@ -24,7 +24,10 @@ export class CreateProductInput {
   authors: Array<Author>;
 
   @IsString()
-  listPrice: string;
+  publisher: string;
+
+  @IsNumber()
+  listPrice: number;
 
   @IsNumber()
   price: number;
