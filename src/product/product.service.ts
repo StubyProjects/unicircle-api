@@ -18,6 +18,8 @@ import { ReviewRepository } from '../review/review.repository';
 import { Condition } from './entities/condition.entity';
 import { Author } from './entities/author.entity';
 import { Category } from './entities/category.entity';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 /**
  * Service which handles database calls related to all product.
