@@ -8,7 +8,6 @@ import { ProductService } from './product.service';
 import { ReviewRepository } from '../review/review.repository';
 import { ProductsController } from './controllers/products.controller';
 import { ConditionController } from './controllers/condition.controller';
-import { MangopayModule } from '../mangopay/mangopay.module';
 import { CategoryRepository } from './repositories/category.reposiotry';
 import { AuthorRepository } from './repositories/author.repository';
 
@@ -16,8 +15,7 @@ import { AuthorRepository } from './repositories/author.repository';
   imports: [
     TypeOrmModule.forFeature([ProductsRepository, ProductlistingRepository, ImagesRepository, ConditionsRepository,
       ReviewRepository, CategoryRepository, AuthorRepository]),
-    HttpModule,
-    MangopayModule
+    HttpModule
   ],
   providers: [
     ProductService,

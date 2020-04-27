@@ -17,5 +17,5 @@ export class Reading extends BaseEntity{
   course: Course;
 
   @ManyToOne(type => Product, product => product.readings)
-  product: Product;
+  product: Product; 
 }
