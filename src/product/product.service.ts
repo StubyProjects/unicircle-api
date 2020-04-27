@@ -57,7 +57,7 @@ export class ProductService {
 
     //If the User didn't provide images for his listing, the request is denied and a Exception gets returned.
     if(images.length < 1) {
-      throw new HttpException('No Images provided', 400);
+      throw new HttpException('No Images provided', HttpStatus.PARTIAL_CONTENT);
     } else {
       //checks if the general product and condition of the listing's product already exist and if not, creates them.
       const newProduct = await this.getOrCreateProduct(isbn10, isbn13, createProductInput);
