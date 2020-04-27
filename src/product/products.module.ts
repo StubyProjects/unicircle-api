@@ -9,11 +9,13 @@ import { ReviewRepository } from '../review/review.repository';
 import { ProductsController } from './controllers/products.controller';
 import { ConditionController } from './controllers/condition.controller';
 import { MangopayModule } from '../mangopay/mangopay.module';
+import { CategoryRepository } from './repositories/category.reposiotry';
+import { AuthorRepository } from './repositories/author.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductsRepository, ProductlistingRepository, ImagesRepository, ConditionsRepository,
-      ReviewRepository]),
+      ReviewRepository, CategoryRepository, AuthorRepository]),
     HttpModule,
     MangopayModule
   ],

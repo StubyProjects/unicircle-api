@@ -1,12 +1,7 @@
-import { EntityRepository, getRepository, Like, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
 import { CreateProductInput } from '../dto/create-product.input';
-import { Reading } from '../../university/entities/reading.entity';
-import { CourseRepository } from '../../university/repositories/course.repository';
-import { UniversityRepository } from '../../university/repositories/university.repository';
-import { University } from '../../university/entities/university.entity';
-import { Course } from '../../university/entities/course.entity';
 
 @EntityRepository(Product)
 export class ProductsRepository extends Repository<Product> {
@@ -17,8 +12,8 @@ export class ProductsRepository extends Repository<Product> {
    */
   async createEntity(createProductInput: CreateProductInput) {
     const {
-      title, isbn10, isbn13, description, author, listPrice,
-      imageUrl, category,
+      title, isbn10, isbn13, description, listPrice,
+      imageUrl
     } = createProductInput;
 
     const product = new Product();
@@ -26,10 +21,9 @@ export class ProductsRepository extends Repository<Product> {
     product.isbn10 = isbn10;
     product.isbn13 = isbn13;
     product.description = description;
-    product.author = author;
     product.listPrice = listPrice;
     product.imageUrl = imageUrl;
-    product.category = category;
+
     await this.save(product);
 
     return product;

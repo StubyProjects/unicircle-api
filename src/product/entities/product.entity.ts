@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Index, OneToMany } 
 import { Productlisting } from './productlisting.entity';
 import { Review } from '../../review/review.entity';
 import { Reading } from '../../university/entities/reading.entity';
+import { Author } from './author.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -24,18 +26,17 @@ export class Product extends BaseEntity {
   @Column()
   description: string;
 
-  @Index({ fulltext: true })
-  @Column()
-  author: string;
-
   @Column()
   listPrice: string;
 
   @Column()
   imageUrl: string;
 
-  @Column()
-  category: string;
+  @OneToMany(type => Author, author => author.product)
+  authors: Author[];
+
+  @OneToMany(type => Category, category => category.product)
+  categories: Category[];
 
   @OneToMany(type => Productlisting, productListing => productListing.product)
   productListings: Productlisting[];

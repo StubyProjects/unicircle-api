@@ -8,7 +8,7 @@ import { ProductsRepository } from './repositories/products.repository';
 import { ProductlistingRepository } from './repositories/productlisting.repository';
 import { CreateProductInput, UpdateProductInput } from './dto/create-product.input';
 import { Product } from './entities/product.entity';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, getRepository } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
 import { map } from 'rxjs/operators';
 import { Productlisting } from './entities/productlisting.entity';
@@ -17,6 +17,8 @@ import { ConditionsRepository } from './repositories/conditions.repository';
 import { ReviewRepository } from '../review/review.repository';
 import { Condition } from './entities/condition.entity';
 import { MangopayService } from '../mangopay/mangopay.service';
+import { Author } from './entities/author.entity';
+import { Category } from './entities/category.entity';
 
 /**
  * Service which handles database calls related to all product.
@@ -74,11 +76,22 @@ export class ProductService {
 
   // checks if the product is already in the database and if not, creates a new one.
   async getOrCreateProduct(isbn10: string,isbn13: string, values: CreateProductInput): Promise<Product> {
+    const { categories, authors} = values;
     let newProduct = await this.productsRepository.findOne({ where: [{ isbn10: isbn10 }, { isbn13: isbn13}] });
     if (newProduct == undefined) {
       newProduct = await this.productsRepository.createEntity(values);
     }
+    await this.saveArray(categories, Category, newProduct);
+    await this.saveArray(authors, Author, newProduct);
     return newProduct;
+  }
+
+  // Creates a new database entry for every item (Author or Category) that belongs to the product.
+  async saveArray(array: Array<Category | Author>, type, product) {
+    await array.forEach(item => {
+      item.product = product;
+      getRepository(type).save(item);
+    });
   }
 
   // checks if the condition is already in the database and if not, creates a new one.
