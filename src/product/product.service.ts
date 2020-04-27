@@ -29,24 +29,18 @@ import { Category } from './entities/category.entity';
 export class ProductService {
 
   constructor(
-      @InjectRepository(ProductsRepository)
-      private productsRepository: ProductsRepository,
-
-      @InjectRepository(ProductlistingRepository)
-      private productListingRepository: ProductlistingRepository,
-
-      @InjectRepository(ImagesRepository)
-      private imagesRepository: ImagesRepository,
-
-      @InjectRepository(ConditionsRepository)
-      private conditionRepository: ConditionsRepository,
-
-      @InjectRepository(ReviewRepository)
-      private reviewRepository: ReviewRepository,
-
-      private http: HttpService,
-
-      private mangopay: MangopayService) {
+    @InjectRepository(ProductsRepository)
+    private productsRepository: ProductsRepository,
+    @InjectRepository(ProductlistingRepository)
+    private productListingRepository: ProductlistingRepository,
+    @InjectRepository(ImagesRepository)
+    private imagesRepository: ImagesRepository,
+    @InjectRepository(ConditionsRepository)
+    private conditionRepository: ConditionsRepository,
+    @InjectRepository(ReviewRepository)
+    private reviewRepository: ReviewRepository,
+    private http: HttpService,
+    private mangopay: MangopayService) {
   }
 
   /*API Key for Google Books*/
@@ -61,23 +55,28 @@ export class ProductService {
   async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
     const { isbn10, isbn13, images, conditionName } = createProductInput;
 
-    //checks if the general product and condition of the listing's product already exist and if not, creates them.
-    const newProduct = await this.getOrCreateProduct(isbn10, isbn13, createProductInput);
-    const newCondition = await this.getOrCreateCondition(conditionName, createProductInput);
+    //If the User didn't provide images for his listing, the request is denied and a Exception gets returned.
+    if(images.length < 1) {
+      throw new HttpException('No Images provided', 400);
+    } else {
+      //checks if the general product and condition of the listing's product already exist and if not, creates them.
+      const newProduct = await this.getOrCreateProduct(isbn10, isbn13, createProductInput);
+      const newCondition = await this.getOrCreateCondition(conditionName, createProductInput);
 
-    const productListing = await this.productListingRepository.createProductListing(createProductInput,newProduct, newCondition, user);
-    // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
-    await images.forEach(image => {
-      image.productListing = productListing;
-      this.imagesRepository.save(image);
-    });
-    return productListing;
+      const productListing = await this.productListingRepository.createProductListing(createProductInput, newProduct, newCondition, user);
+      // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
+      await images.forEach(image => {
+        image.productListing = productListing;
+        this.imagesRepository.save(image);
+      });
+      return productListing;
+    }
   }
 
   // checks if the product is already in the database and if not, creates a new one.
-  async getOrCreateProduct(isbn10: string,isbn13: string, values: CreateProductInput): Promise<Product> {
-    const { categories, authors} = values;
-    let newProduct = await this.productsRepository.findOne({ where: [{ isbn10: isbn10 }, { isbn13: isbn13}] });
+  async getOrCreateProduct(isbn10: string, isbn13: string, values: CreateProductInput): Promise<Product> {
+    const { categories, authors } = values;
+    let newProduct = await this.productsRepository.findOne({ where: [{ isbn10: isbn10 }, { isbn13: isbn13 }] });
     if (newProduct == undefined) {
       newProduct = await this.productsRepository.createEntity(values);
     }
@@ -106,15 +105,15 @@ export class ProductService {
   async getConditions(): Promise<Condition[]> {
 
     this.mangopay.getClient().Users.create({
-      PersonType: "NATURAL",
-      FirstName: "John",
-      LastName: "Smith",
+      PersonType: 'NATURAL',
+      FirstName: 'John',
+      LastName: 'Smith',
       Birthday: 1300186358,
-      Nationality: "FR",
-      CountryOfResidence: "GB",
-      Email: "jab@stabilinger.eu",
-    }).then(function (response) {
-      console.log("Natural user created", response);
+      Nationality: 'FR',
+      CountryOfResidence: 'GB',
+      Email: 'jab@stabilinger.eu',
+    }).then(function(response) {
+      console.log('Natural user created', response);
     });
 
     return await this.conditionRepository.find();
@@ -127,7 +126,7 @@ export class ProductService {
 
   //returns all products with a pagination of 15.
   async getAllProducts(page = 1): Promise<Array<Product>> {
-    return await this.productsRepository.find({ take: 15, skip: 15 * (page - 1)});
+    return await this.productsRepository.find({ take: 15, skip: 15 * (page - 1) });
   }
 
   //returns all products of one seller.
@@ -176,14 +175,14 @@ export class ProductService {
       const productListing = await this.productListingRepository.findOne(bookId);
 
       //deletes all images associated to the productListing.
-      const images = await this.imagesRepository.find( { where: { productListing: productListing}});
+      const images = await this.imagesRepository.find({ where: { productListing: productListing } });
       images.forEach(image => {
         this.imagesRepository.delete(image);
       });
       //checks if there are more listings for this product and if not, the general product gets
       //deleted as well.
       const product = productListing.product;
-      if(this.wasLastListingFor(product)) {
+      if (this.wasLastListingFor(product)) {
         this.deleteProduct(product);
       }
       return this.productListingRepository.delete(bookId);
@@ -195,11 +194,11 @@ export class ProductService {
    * @param product - the product
    */
   async deleteProduct(product: Product) {
-      const reviews = await this.reviewRepository.find({ where: { product: product}});
-      reviews.forEach(review => {
-        this.reviewRepository.deleteReview(review.id);
-      });
-      return await this.productsRepository.delete(product);
+    const reviews = await this.reviewRepository.find({ where: { product: product } });
+    reviews.forEach(review => {
+      this.reviewRepository.deleteReview(review.id);
+    });
+    return await this.productsRepository.delete(product);
   }
 
   /**
@@ -207,7 +206,7 @@ export class ProductService {
    * @param product - the general product.
    */
   async wasLastListingFor(product: Product): Promise<boolean> {
-    const lastListing = await this.productListingRepository.findOne({ where: { product: product}});
+    const lastListing = await this.productListingRepository.findOne({ where: { product: product } });
     return !lastListing;
   }
 
