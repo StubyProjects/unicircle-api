@@ -103,19 +103,6 @@ export class ProductService {
   }
 
   async getConditions(): Promise<Condition[]> {
-
-    this.mangopay.getClient().Users.create({
-      PersonType: 'NATURAL',
-      FirstName: 'John',
-      LastName: 'Smith',
-      Birthday: 1300186358,
-      Nationality: 'FR',
-      CountryOfResidence: 'GB',
-      Email: 'jab@stabilinger.eu',
-    }).then(function(response) {
-      console.log('Natural user created', response);
-    });
-
     return await this.conditionRepository.find();
   }
 
