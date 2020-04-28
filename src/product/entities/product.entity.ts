@@ -31,16 +31,13 @@ export class Product extends BaseEntity {
   description: string;
 
   @Column()
-  listPrice: number;
+  listPrice: string;
 
   @Column()
   imageUrl: string;
 
   @Column()
   publisher: string;
-
-  @Column()
-  discount: number;
 
   @OneToMany(type => Author, author => author.product)
   authors: Author[];

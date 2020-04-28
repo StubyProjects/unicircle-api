@@ -26,8 +26,8 @@ export class CreateProductInput {
   @IsString()
   publisher: string;
 
-  @IsNumber()
-  listPrice: number;
+  @IsString()
+  listPrice: string;
 
   @IsNumber()
   price: number;

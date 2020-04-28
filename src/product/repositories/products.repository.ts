@@ -1,4 +1,4 @@
-import { Double, EntityRepository, Like, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
 import { CreateProductInput } from '../dto/create-product.input';
@@ -13,12 +13,8 @@ export class ProductsRepository extends Repository<Product> {
   async createEntity(createProductInput: CreateProductInput) {
     const {
       title, subtitle, isbn10, isbn13, description, listPrice,
-      imageUrl, publisher, price
+      imageUrl, publisher
     } = createProductInput;
-
-    console.log(price / listPrice);
-
-    const discount = 1 - (price / listPrice);
 
     const product = new Product();
     product.title = title;
@@ -29,7 +25,6 @@ export class ProductsRepository extends Repository<Product> {
     product.listPrice = listPrice;
     product.imageUrl = imageUrl;
     product.publisher = publisher;
-    product.discount = discount;
 
     await this.save(product);
 
@@ -54,8 +49,8 @@ export class ProductsRepository extends Repository<Product> {
   async findBySearch(searchTerm) {
     return await this.find({
       where: [
-        { description: Like('%' + searchTerm + '%') },
-        { author: Like('%' + searchTerm + '%') },
+        { title: Like('%' + searchTerm + '%') },
+        { description: Like('%' + searchTerm + '%') }
       ],
     });
   }

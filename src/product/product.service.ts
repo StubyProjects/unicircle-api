@@ -16,9 +16,10 @@ import { ImagesRepository } from './repositories/images.repository';
 import { ConditionsRepository } from './repositories/conditions.repository';
 import { ReviewRepository } from '../review/review.repository';
 import { Condition } from './entities/condition.entity';
-import { MangopayService } from '../mangopay/mangopay.service';
 import { Author } from './entities/author.entity';
 import { Category } from './entities/category.entity';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 /**
  * Service which handles database calls related to all product.
@@ -39,12 +40,8 @@ export class ProductService {
     private conditionRepository: ConditionsRepository,
     @InjectRepository(ReviewRepository)
     private reviewRepository: ReviewRepository,
-    private http: HttpService,
-    private mangopay: MangopayService) {
+    private http: HttpService) {
   }
-
-  /*API Key for Google Books*/
-  bookAPIKey = 'AIzaSyAKzeje5Zj62kUafvDwz6EnYB0EweJLjOw';
 
   /**
    * Adds a new product to the database. If this product is already sold by another vendor,
@@ -132,11 +129,11 @@ export class ProductService {
    */
   async getBySearch(searchTerm: string) {
     const products: Product[] = await this.productsRepository.findBySearch(searchTerm);
-    if (products.length == 0) {
+   if (products.length == 0) {
       return this.googleBookSearch(searchTerm);
     } else {
       return products;
-    }
+   }
   }
 
   /**
@@ -202,7 +199,7 @@ export class ProductService {
    * @param searchTerm - how the user searches for the book, e.g. ISBN , title, author, etc.
    */
   async googleBookSearch(searchTerm: string) {
-    return this.http.get('https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&key=' + this.bookAPIKey)
+    return this.http.get('https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&key=' + process.env.GOOGLE_BOOKS_KEY)
       .pipe(map(response => response.data));
   }
 

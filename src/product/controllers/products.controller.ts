@@ -49,7 +49,6 @@ export class ProductsController {
     return this.productService.getBySearch(term);
   }
 
-
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async listProduct(
