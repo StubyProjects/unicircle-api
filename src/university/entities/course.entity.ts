@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { IsString } from 'class-validator';
 import { University } from './university.entity';
-import { Reading } from './reading.entity';
+import { IsPartOf } from './is-part-of.entity';
 
 @Entity()
 export class Course extends BaseEntity{
@@ -24,11 +24,11 @@ export class Course extends BaseEntity{
   @Column()
   graduation: GraduationType;
 
+  @OneToMany(type => IsPartOf, isPartOf => isPartOf.lecture)
+  isPartOf: IsPartOf[];
+
   @ManyToOne(type => University, university => university.courses)
   university: University;
-
-  @OneToMany(type => Reading, reading => reading.course)
-  readings: Reading[];
 
 }
 

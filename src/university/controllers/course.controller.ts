@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UniversityService } from '../university.service';
 import { Course, GraduationType, Semester } from '../entities/course.entity';
 import { Reading } from '../entities/reading.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * Controller API which handles requests from the client related to course stuff.
@@ -40,6 +41,7 @@ export class CourseController {
    * @param graduation - "BACHELOR" or "MASTER"
    * @param universityId
    */
+  @UseGuards(AuthGuard('jwt'))
   @Post('/create')
   async createCourse(@Body('name') name: string,
                      @Body('graduation') graduation: GraduationType,
@@ -54,6 +56,7 @@ export class CourseController {
    * @param productId
    * @param courseId
    */
+  @UseGuards(AuthGuard('jwt'))
   @Post('/:courseId/readings')
   async createReading(@Body('semester') semester: Semester,
                       @Body('productId') productId: string,

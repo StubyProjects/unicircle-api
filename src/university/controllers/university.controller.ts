@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { UniversityService } from '../university.service';
 import { University } from '../entities/university.entity';
 import { Course, GraduationType, Semester } from '../entities/course.entity';
 import { Reading } from '../entities/reading.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * Controller API which handles requests from the client related to university stuff.
@@ -36,6 +37,7 @@ export class UniversityController {
    * @param name - name of the university
    * @param town - town the university is in
    */
+  @UseGuards(AuthGuard('jwt'))
   @Post('/create')
   async createUniversity(@Body('name') name: string,
                          @Body('town') town: string): Promise<University> {

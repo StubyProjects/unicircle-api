@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UniversityRepository } from './repositories/university.repository';
 import { CourseRepository } from './repositories/course.repository';
-import { ProductsRepository } from '../product/repositories/products.repository';
 import { University } from './entities/university.entity';
 import { Course, GraduationType, Semester } from './entities/course.entity';
 import { Reading } from './entities/reading.entity';
 import { getRepository } from 'typeorm';
 import { Product } from '../product/entities/product.entity';
+import { LectureRepository } from './repositories/lecture.repository';
+import { IsPartOf } from './entities/is-part-of.entity';
 
 /**
  * Service which connects to the database for university related operations.
@@ -19,7 +20,9 @@ export class UniversityService {
 
   constructor(@InjectRepository(UniversityRepository) private universityRepository: UniversityRepository,
 
-              @InjectRepository(CourseRepository) private courseRepository: CourseRepository) {}
+              @InjectRepository(CourseRepository) private courseRepository: CourseRepository,
+
+              @InjectRepository(LectureRepository) private lectureRepository: LectureRepository) {}
 
   /**
    * Returns all universities in the database
@@ -53,6 +56,10 @@ export class UniversityService {
     return this.courseRepository.getSemesterProductsById(courseId, semester);
   }
 
+  async getLectureProductsById(id: string): Promise<Product[]> {
+    return this.lectureRepository.getLectureProductsById(id);
+  }
+
   /**
    * Creates a new university
    * @param name
@@ -73,19 +80,31 @@ export class UniversityService {
     return await this.courseRepository.createCourse(name, graduation, university);
   }
 
+  async createLecture(name: string, courseId: string) {
+    const lecture = await this.lectureRepository.createLecture(name);
+    const course = await getRepository(Course).findOne(courseId);
+
+    // Creates a new Many to Many relation between the lecture and the course.
+    const isPartOf = new IsPartOf();
+    isPartOf.course = course;
+    isPartOf.lecture = lecture;
+    await getRepository(IsPartOf).save(isPartOf);
+    return lecture;
+  }
+
   /**
    * Creates a new reading in the database.
    * @param semester - the semester in which the product of the reading is read in
    * @param productId - the product of the reading
-   * @param courseId - the course in which the product is read in
+   * @param lectureId - id of the lecture the reading belongs to
    */
-  async createReading(semester: Semester, productId: string, courseId: string): Promise<Reading> {
+  async createReading(semester: Semester, productId: string, lectureId: string): Promise<Reading> {
     const product = getRepository(Product).findOne(productId);
-    const course = this.courseRepository.findOne(courseId);
+    const lecture = this.lectureRepository.findOne(lectureId);
     const reading = new Reading();
     reading.semester = semester;
     reading.product = await product;
-    reading.course = await course;
+    reading.lecture = await lecture;
     await reading.save();
     return reading;
   }

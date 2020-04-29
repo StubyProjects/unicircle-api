@@ -4,6 +4,8 @@ import { Review } from '../../review/review.entity';
 import { Reading } from '../../university/entities/reading.entity';
 import { Author } from './author.entity';
 import { Category } from './category.entity';
+import { IsIncluded } from './is-included.entity';
+import { WrittenBy } from './written-by.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -39,11 +41,13 @@ export class Product extends BaseEntity {
   @Column()
   publisher: string;
 
-  @OneToMany(type => Author, author => author.product)
-  authors: Author[];
+  // refers to the many to many table "writtenBy" between author and product.
+  @OneToMany(type => WrittenBy, writtenBy => writtenBy.product)
+  writtenBy: WrittenBy[];
 
-  @OneToMany(type => Category, category => category.product)
-  categories: Category[];
+  // refers to the many to many table "IsIncluded" between category and product.
+  @OneToMany(type => IsIncluded, isIncluded => isIncluded.product)
+  inclusions: IsIncluded[];
 
   @OneToMany(type => Productlisting, productListing => productListing.product)
   productListings: Productlisting[];

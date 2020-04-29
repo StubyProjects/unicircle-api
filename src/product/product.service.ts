@@ -20,13 +20,15 @@ import { Condition } from './entities/condition.entity';
 import { Author } from './entities/author.entity';
 import { Category } from './entities/category.entity';
 import * as dotenv from 'dotenv';
+import { IsIncluded } from './entities/is-included.entity';
+import { WrittenBy } from './entities/written-by.entity';
 
 dotenv.config();
 
 /**
  * Service which handles database calls related to all product.
  * @author (Paul Dietrich, Jakob Stuby)
- * @version (16.04.2020)
+ * @version (30.04.2020)
  */
 @Injectable()
 export class ProductService {
@@ -77,16 +79,36 @@ export class ProductService {
 
     const newProduct = await this.productsRepository.createEntity(createProductInput);
 
-    await this.saveArray(categories, Category, newProduct);
-    await this.saveArray(authors, Author, newProduct);
+    await this.saveCategories(categories, newProduct);
+    await this.saveAuthors(authors, newProduct);
     return newProduct;
   }
 
-  // Creates a new database entry for every item (Author or Category) that belongs to the product.
-  async saveArray(array: Array<Category | Author>, type, product) {
-    await array.forEach(item => {
-      item.product = product;
-      getRepository(type).save(item);
+  // Creates a new database entry for every Category that belongs to the product.
+  async saveCategories(array: Array<Category>, product) {
+    array.forEach(item => {
+      const existingCategory = getRepository(Category).findOne(item.title);
+      if (!existingCategory) {
+        getRepository(Category).save(item);
+      }
+      const inclusion = new IsIncluded();
+      inclusion.category = item;
+      inclusion.product = product;
+      getRepository(IsIncluded).save(inclusion);
+    });
+  }
+
+  // Creates a new database entry for every Category that belongs to the product.
+  async saveAuthors(array: Array<Author>, product) {
+    array.forEach(item => {
+      const existingAuthor = getRepository(Author).findOne(item.name);
+      if (!existingAuthor) {
+        getRepository(Author).save(item);
+      }
+      const writtenBy = new WrittenBy();
+      writtenBy.author = item;
+      writtenBy.product = product;
+      getRepository(WrittenBy).save(writtenBy);
     });
   }
 

@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
-import { Product } from './product.entity';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
+import { WrittenBy } from './written-by.entity';
 
 @Entity()
 export class Author extends BaseEntity{
@@ -10,6 +10,6 @@ export class Author extends BaseEntity{
   @Column()
   name: string;
 
-  @ManyToOne(type => Product, product => product.authors)
-  product: Product;
+  @OneToMany(type => WrittenBy, writing => writing.author)
+  writings: WrittenBy[];
 }

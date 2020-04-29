@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
-import { Product } from './product.entity';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
+import { IsIncluded } from './is-included.entity';
 
 @Entity()
 export class Category extends BaseEntity{
@@ -10,6 +10,6 @@ export class Category extends BaseEntity{
   @Column()
   title: string;
 
-  @ManyToOne(type => Product, product => product.categories)
-  product: Product;
+  @OneToMany(type => IsIncluded, isIncluded => isIncluded.category)
+  inclusions: IsIncluded[];
 }

@@ -19,7 +19,9 @@ export class CourseRepository extends Repository<Course> {
     return getRepository(Product)
       .createQueryBuilder("product")
       .innerJoin("product.readings", "reading")
-      .where("reading.course.id = :courseId", { courseId: courseId })
+      .innerJoin("reading.lecture", "lecture")
+      .innerJoin("lecture.isPartOf", "isPartOf")
+      .where("isPartOf.course.id = :courseId", { courseId: courseId })
       .getMany();
   }
 
@@ -34,8 +36,10 @@ export class CourseRepository extends Repository<Course> {
     return getRepository(Product)
       .createQueryBuilder("product")
       .innerJoin("product.readings", "reading")
+      .innerJoin("reading.lecture", "lecture")
+      .innerJoin("lecture.isPartOf", "isPartOf")
       .where("reading.semester = :semester", { semester: semester})
-      .andWhere("reading.course.id = :courseId", { courseId: courseId})
+      .andWhere("isPartOf.course.id = :courseId", { courseId: courseId})
       .getMany()
   }
 
