@@ -6,14 +6,18 @@ import { UniversityService } from './university.service';
 import { UniversityController } from './controllers/university.controller';
 import { ProductsRepository } from '../product/repositories/products.repository';
 import { CourseController } from './controllers/course.controller';
+import { LectureController } from './controllers/lecture.controller';
+import { LectureRepository } from './repositories/lecture.repository';
+import { IsPartOfRepository } from './repositories/is-part-of.repository';
 
 @Module({ imports: [
-    TypeOrmModule.forFeature([UniversityRepository, CourseRepository, ProductsRepository]),
+    TypeOrmModule.forFeature([UniversityRepository, CourseRepository, ProductsRepository,
+      LectureRepository, IsPartOfRepository]),
     HttpModule
   ],
   providers: [
     UniversityService,
   ],
-  controllers: [UniversityController, CourseController],
+  controllers: [UniversityController, CourseController, LectureController],
 })
 export class UniversityModule {}
