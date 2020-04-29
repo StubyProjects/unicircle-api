@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  HttpService, HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsRepository } from './repositories/products.repository';
 import { ProductlistingRepository } from './repositories/productlisting.repository';
@@ -125,8 +121,27 @@ export class ProductService {
   }
 
   //returns one product with the specified id.
-  async findOneById(id: string): Promise<Product> {
-    return this.productsRepository.findOne(id);
+  async findOneById(id: string): Promise<any> {
+    const product = await this.productsRepository.findOne(id);
+
+    const categories = await getRepository(Category)
+      .createQueryBuilder("category")
+      .innerJoin("category.inclusions", "isIncluded")
+      .where("isIncluded.product.id = :id", { id: id})
+      .getMany();
+
+    const authors = await getRepository(Author)
+      .createQueryBuilder("author")
+      .innerJoin("author.writings", "writing")
+      .where("writing.product.id = :id", { id: id})
+      .getMany();
+
+    return {
+      product,
+      categories,
+      authors
+    };
+
   }
 
   //returns all products with a pagination of 15.

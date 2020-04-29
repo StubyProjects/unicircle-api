@@ -50,6 +50,9 @@ export class ProductsRepository extends Repository<Product> {
     return await this.find({
       where: [
         { title: Like('%' + searchTerm + '%') },
+        { subtitle: Like('%' + searchTerm + '%') },
+        { isbn10: Like('%' + searchTerm + '%') },
+        { isbn13: Like('%' + searchTerm + '%') },
         { description: Like('%' + searchTerm + '%') }
       ],
     });
