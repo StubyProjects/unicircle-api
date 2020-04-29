@@ -85,31 +85,39 @@ export class ProductService {
   }
 
   // Creates a new database entry for every Category that belongs to the product.
-  async saveCategories(array: Array<Category>, product) {
-    array.forEach(item => {
-      const existingCategory = getRepository(Category).findOne(item.title);
-      if (!existingCategory) {
-        getRepository(Category).save(item);
+  async saveCategories(array: Array<Category>, product: Product) {
+    for (const category of array) {
+      let existingCategory = await getRepository(Category).findOne({ where: { title: category.title}});
+      if (existingCategory == undefined) {
+        existingCategory = await getRepository(Category).save(category);
       }
-      const inclusion = new IsIncluded();
-      inclusion.category = item;
-      inclusion.product = product;
-      getRepository(IsIncluded).save(inclusion);
-    });
+      await this.createInclusion(product, existingCategory);
+    }
+  }
+
+  async createInclusion(product: Product, category: Category) {
+    const inclusion = new IsIncluded();
+    inclusion.product = product;
+    inclusion.category = category;
+    await getRepository(IsIncluded).save(inclusion);
   }
 
   // Creates a new database entry for every Category that belongs to the product.
-  async saveAuthors(array: Array<Author>, product) {
-    array.forEach(item => {
-      const existingAuthor = getRepository(Author).findOne(item.name);
-      if (!existingAuthor) {
-        getRepository(Author).save(item);
+  async saveAuthors(array: Array<Author>, product: Product) {
+    for (const author of array) {
+      let existingAuthor = await getRepository(Author).findOne({ where: { name: author.name}});
+      if (existingAuthor == undefined) {
+        existingAuthor = await getRepository(Author).save(author);
       }
-      const writtenBy = new WrittenBy();
-      writtenBy.author = item;
-      writtenBy.product = product;
-      getRepository(WrittenBy).save(writtenBy);
-    });
+      await this.createWrittenBy(product, existingAuthor);
+    }
+  }
+
+  async createWrittenBy(product: Product, author: Author) {
+    const writtenBy = new WrittenBy();
+    writtenBy.product = product;
+    writtenBy.author = author;
+    await getRepository(WrittenBy).save(writtenBy);
   }
 
   async getConditions(): Promise<Condition[]> {
