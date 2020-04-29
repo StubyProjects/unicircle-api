@@ -6,7 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsRepository } from './repositories/products.repository';
 import { ProductlistingRepository } from './repositories/productlisting.repository';
-import { CreateProductInput, UpdateProductInput } from './dto/create-product.input';
+import { CreateProductInput } from './dto/create-product.input';
+import { CreateListingInput, UpdateListingInput } from './dto/create-listing.input';
 import { Product } from './entities/product.entity';
 import { DeleteResult, getRepository } from 'typeorm';
 import { GetProductsFilterDto } from './dto/get-products-filter.dto';
@@ -19,6 +20,7 @@ import { Condition } from './entities/condition.entity';
 import { Author } from './entities/author.entity';
 import { Category } from './entities/category.entity';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 /**
@@ -46,21 +48,21 @@ export class ProductService {
   /**
    * Adds a new product to the database. If this product is already sold by another vendor,
    * only a new product listing gets created.
-   * @param createProductInput - all data which is needed to create a new product
+   * @param createListingInput
    * @param user
    */
-  async listProduct(createProductInput: CreateProductInput, user): Promise<Productlisting> {
-    const { isbn10, isbn13, images, conditionName } = createProductInput;
+  async createListing(createListingInput: CreateListingInput, user): Promise<Productlisting> {
+
+    const { images, conditionName, productId } = createListingInput;
 
     //If the User didn't provide images for his listing, the request is denied and a Exception gets returned.
     if(images.length < 1) {
       throw new HttpException('No Images provided', HttpStatus.PARTIAL_CONTENT);
     } else {
       //checks if the general product and condition of the listing's product already exist and if not, creates them.
-      const newProduct = await this.getOrCreateProduct(isbn10, isbn13, createProductInput);
-      const newCondition = await this.getOrCreateCondition(conditionName, createProductInput);
+      const condition = await this.conditionRepository.findOne({ where: { name: conditionName } });
 
-      const productListing = await this.productListingRepository.createProductListing(createProductInput, newProduct, newCondition, user);
+      const productListing = await this.productListingRepository.createProductListing(createListingInput, productId, condition, user);
       // Creates a new database entry for every image the seller uploaded and links them to the new listing of the seller.
       await images.forEach(image => {
         image.productListing = productListing;
@@ -70,13 +72,11 @@ export class ProductService {
     }
   }
 
-  // checks if the product is already in the database and if not, creates a new one.
-  async getOrCreateProduct(isbn10: string, isbn13: string, values: CreateProductInput): Promise<Product> {
-    const { categories, authors } = values;
-    let newProduct = await this.productsRepository.findOne({ where: [{ isbn10: isbn10 }, { isbn13: isbn13 }] });
-    if (newProduct == undefined) {
-      newProduct = await this.productsRepository.createEntity(values);
-    }
+  async createProduct(createProductInput: CreateProductInput) {
+    const { categories, authors } = createProductInput;
+
+    const newProduct = await this.productsRepository.createEntity(createProductInput);
+
     await this.saveArray(categories, Category, newProduct);
     await this.saveArray(authors, Author, newProduct);
     return newProduct;
@@ -88,15 +88,6 @@ export class ProductService {
       item.product = product;
       getRepository(type).save(item);
     });
-  }
-
-  // checks if the condition is already in the database and if not, creates a new one.
-  async getOrCreateCondition(searchTerm: string, values: CreateProductInput): Promise<Condition> {
-    let newCondition = await this.conditionRepository.findOne({ where: { name: searchTerm } });
-    if (newCondition == undefined) {
-      newCondition = await this.conditionRepository.createEntity(values);
-    }
-    return newCondition;
   }
 
   async getConditions(): Promise<Condition[]> {
@@ -139,12 +130,12 @@ export class ProductService {
   /**
    * After validating the owner, the productListing gets updated
    * @param id - id of the product
-   * @param updateProductInput - all the fields which should be updated
+   * @param updateListingInput
    * @param user - the user who wants to make the update
    */
-  async updateProduct(id: string, updateProductInput: UpdateProductInput, user): Promise<Productlisting> {
+  async updateProduct(id: string, updateListingInput: UpdateListingInput, user): Promise<Productlisting> {
     if (this.validateOwner(id, user)) {
-      await this.productListingRepository.update(id, updateProductInput);
+      await this.productListingRepository.update(id, updateListingInput);
       return await this.productListingRepository.findOne(id);
     }
   }

@@ -1,16 +1,16 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Condition } from '../entities/condition.entity';
-import {CreateProductInput} from "../dto/create-product.input";
+import {CreateListingInput} from "../dto/create-listing.input";
 
 @EntityRepository(Condition)
 export class ConditionsRepository extends Repository<Condition> {
 
     /**
      * Creates a new condition in the database.
-     * @param createProductInput -  attributes of the product which are needed to create the condition.
+     * @param createListingInput
      */
-    async createEntity(createProductInput: CreateProductInput) {
-        const { conditionName, conditionDescription } = createProductInput;
+    async createEntity(createListingInput: CreateListingInput) {
+        const { conditionName, conditionDescription } = createListingInput;
 
         const condition = new Condition();
         condition.name = conditionName;

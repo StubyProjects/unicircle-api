@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from '../product.service';
 import { CreateProductInput } from '../dto/create-product.input';
+import { CreateListingInput } from '../dto/create-listing.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
 import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
-import { UpdateProductInput } from '../dto/create-product.input';
+import { UpdateListingInput } from '../dto/create-listing.input';
 import { User } from '../../custom-decorators/user.decorator';
 import { UserModel as UserEntity} from '../../types/user.model';
 import { Product } from '../entities/product.entity';
@@ -50,18 +51,27 @@ export class ProductsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post()
-  async listProduct(
-    @Body() createProductInput: CreateProductInput,
+  @Post("new")
+  async createProduct(
+    @Body() createProductInput: CreateProductInput
+  ) {
+    return this.productService.createProduct(createProductInput);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post("list")
+  async createProductListing(
+    @Body() createListingInput: CreateListingInput,
     @User() user: UserEntity): Promise<Productlisting> {
-    return this.productService.listProduct(createProductInput, user);
+
+    return this.productService.createListing(createListingInput, user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/:id')
   async updateProduct(
     @Param('id') id:string,
-    @Body() updateProductInput: UpdateProductInput,
+    @Body() updateProductInput: UpdateListingInput,
     @User() user: UserEntity): Promise<Productlisting> {
 
     return this.productService.updateProduct(id, updateProductInput, user);
