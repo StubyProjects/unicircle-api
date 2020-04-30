@@ -122,31 +122,12 @@ export class ProductService {
 
   //returns one product with the specified id.
   async findOneById(id: string): Promise<any> {
-    const product = await this.productsRepository.findOne(id);
-
-    const categories = await getRepository(Category)
-      .createQueryBuilder("category")
-      .innerJoin("category.inclusions", "isIncluded")
-      .where("isIncluded.product.id = :id", { id: id})
-      .getMany();
-
-    const authors = await getRepository(Author)
-      .createQueryBuilder("author")
-      .innerJoin("author.writings", "writing")
-      .where("writing.product.id = :id", { id: id})
-      .getMany();
-
-    return {
-      product,
-      categories,
-      authors
-    };
-
+    return this.productsRepository.findOneById(id);
   }
 
   //returns all products with a pagination of 15.
-  async getAllProducts(page = 1): Promise<Array<Product>> {
-    return await this.productsRepository.find({ take: 15, skip: 15 * (page - 1) });
+  async getAllProducts(page = 1): Promise<Array<any>> {
+    return await this.productsRepository.getAllProducts(page);
   }
 
   //returns all products of one seller.
