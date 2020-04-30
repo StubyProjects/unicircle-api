@@ -146,6 +146,7 @@ export class ProductService {
    */
   async getBySearch(searchTerm: string) {
     const products: Product[] = await this.productsRepository.findBySearch(searchTerm);
+
    if (products.length == 0) {
       return this.googleBookSearch(searchTerm);
     } else {

@@ -2,8 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, Index, OneToMany } 
 import { Productlisting } from './productlisting.entity';
 import { Review } from '../../review/review.entity';
 import { Reading } from '../../university/entities/reading.entity';
-import { Author } from './author.entity';
-import { Category } from './category.entity';
 import { IsIncluded } from './is-included.entity';
 import { WrittenBy } from './written-by.entity';
 
@@ -29,7 +27,7 @@ export class Product extends BaseEntity {
   isbn13: string;
 
   @Index({ fulltext: true })
-  @Column()
+  @Column({ length: 500 })
   description: string;
 
   @Column()

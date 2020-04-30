@@ -1,6 +1,6 @@
-import { EntityRepository, getRepository, Like, Repository } from 'typeorm';
+import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
-import { GetProductsFilterDto, PartialProductFilter } from '../dto/get-products-filter.dto';
+import { PartialProductFilter } from '../dto/get-products-filter.dto';
 import { CreateProductInput } from '../dto/create-product.input';
 import { Category } from '../entities/category.entity';
 import { Author } from '../entities/author.entity';
@@ -140,7 +140,7 @@ export class ProductsRepository extends Repository<Product> {
    * @param searchTerm
    */
   async findBySearch(searchTerm) {
-    return this.createQueryBuilder('product')
+    return await this.createQueryBuilder('product')
       .innerJoin("product.writtenBy", "writtenBy")
       .innerJoin("writtenBy.author", "author")
       .innerJoin("product.inclusions", "inclusion")
