@@ -4,7 +4,7 @@ import { CreateProductInput } from '../dto/create-product.input';
 import { CreateListingInput } from '../dto/create-listing.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
-import { GetProductsFilterDto } from '../dto/get-products-filter.dto';
+import { GetProductsFilterDto, PartialProductFilter } from '../dto/get-products-filter.dto';
 import { UpdateListingInput } from '../dto/create-listing.input';
 import { User } from '../../custom-decorators/user.decorator';
 import { UserModel as UserEntity} from '../../types/user.model';
@@ -25,7 +25,7 @@ export class ProductsController {
   constructor(private productService: ProductService) {}
 
   @Get()
-  async getProducts(@Body() filterDto: GetProductsFilterDto, @Query('page') page: number): Promise<Product[]> {
+  async getProducts(@Body() filterDto: PartialProductFilter, @Query('page') page: number): Promise<any[]> {
 
     if(Object.keys(filterDto).length) {
       return this.productService.getProductsWithFilters(filterDto);

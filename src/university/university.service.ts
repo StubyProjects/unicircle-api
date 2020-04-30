@@ -81,7 +81,10 @@ export class UniversityService {
   }
 
   async createLecture(name: string, courseId: string) {
-    const lecture = await this.lectureRepository.createLecture(name);
+    let lecture = await this.lectureRepository.findOne({ where: { name: name}});
+    if(lecture == undefined) {
+      lecture = await this.lectureRepository.createLecture(name);
+    }
     const course = await getRepository(Course).findOne(courseId);
 
     // Creates a new Many to Many relation between the lecture and the course.

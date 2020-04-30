@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsString } from 'class-validator';
 import { Course } from './course.entity';
 
@@ -8,6 +8,7 @@ export class University extends BaseEntity{
   @PrimaryGeneratedColumn()
   id: string;
 
+  @Index({ fulltext: true })
   @Column()
   @IsString()
   name: string;

@@ -1,5 +1,5 @@
 import { Reading } from './reading.entity';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsString } from 'class-validator';
 import { IsPartOf } from './is-part-of.entity';
 
@@ -9,6 +9,7 @@ export class Lecture extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
+  @Index({ fulltext: true })
   @IsString()
   @Column()
   name: string;

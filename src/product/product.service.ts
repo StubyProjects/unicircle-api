@@ -6,7 +6,7 @@ import { CreateProductInput } from './dto/create-product.input';
 import { CreateListingInput, UpdateListingInput } from './dto/create-listing.input';
 import { Product } from './entities/product.entity';
 import { DeleteResult, getRepository } from 'typeorm';
-import { GetProductsFilterDto } from './dto/get-products-filter.dto';
+import { PartialProductFilter } from './dto/get-products-filter.dto';
 import { map } from 'rxjs/operators';
 import { Productlisting } from './entities/productlisting.entity';
 import { ImagesRepository } from './repositories/images.repository';
@@ -136,7 +136,7 @@ export class ProductService {
   }
 
   //returns all products which match the filters in the filterDto.
-  async getProductsWithFilters(filterDto: GetProductsFilterDto) {
+  async getProductsWithFilters(filterDto: PartialProductFilter) {
     return await this.productsRepository.getProductsWithFilters(filterDto);
   }
 

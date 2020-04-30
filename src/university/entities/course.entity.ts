@@ -1,7 +1,7 @@
 import {
   BaseEntity,
   Column,
-  Entity,
+  Entity, Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -16,6 +16,7 @@ export class Course extends BaseEntity{
   @PrimaryGeneratedColumn()
   id: string;
 
+  @Index({ fulltext: true })
   @IsString()
   @Column()
   name: string;

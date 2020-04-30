@@ -49,20 +49,5 @@ export class CourseController {
     return this.universityService.createCourse(name, graduation, universityId);
   }
 
-  /**
-   * Creates a new reading in the database. Should be called AFTER(!) the relating course and the
-   * relating product are created in the database.
-   * @param semester
-   * @param productId
-   * @param courseId
-   */
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/:courseId/readings')
-  async createReading(@Body('semester') semester: Semester,
-                      @Body('productId') productId: string,
-                      @Param('courseId') courseId: string,): Promise<Reading> {
-    return this.universityService.createReading(semester, productId, courseId);
-  }
-
 
 }
