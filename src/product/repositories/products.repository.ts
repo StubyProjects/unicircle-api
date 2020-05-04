@@ -76,7 +76,6 @@ export class ProductsRepository extends Repository<Product> {
       .createQueryBuilder('author')
       .innerJoin('author.writings', 'writing')
       .where('writing.product.id = :id', { id: id })
-      .orderBy("price")
       .getMany();
   }
 
