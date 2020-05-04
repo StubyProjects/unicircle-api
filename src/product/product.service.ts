@@ -41,8 +41,7 @@ export class ProductService {
     private conditionRepository: ConditionsRepository,
     @InjectRepository(ReviewRepository)
     private reviewRepository: ReviewRepository,
-    private http: HttpService,
-    private mangoPay: MangopayService) {
+    private http: HttpService) {
   }
 
   /**
