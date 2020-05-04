@@ -18,6 +18,7 @@ import { Category } from './entities/category.entity';
 import * as dotenv from 'dotenv';
 import { IsIncluded } from './entities/is-included.entity';
 import { WrittenBy } from './entities/written-by.entity';
+import { MangopayService } from '../mangopay/mangopay.service';
 
 dotenv.config();
 
@@ -40,7 +41,8 @@ export class ProductService {
     private conditionRepository: ConditionsRepository,
     @InjectRepository(ReviewRepository)
     private reviewRepository: ReviewRepository,
-    private http: HttpService) {
+    private http: HttpService,
+    private mangoPay: MangopayService) {
   }
 
   /**
