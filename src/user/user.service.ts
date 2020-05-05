@@ -1,5 +1,8 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { UpdateUserInput } from './update-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from './user.repository';
+import { CreateUserInput, PartialUserInput } from './dto/create-user.input';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -9,7 +12,14 @@ import { UpdateUserInput } from './update-user.input';
 @Injectable()
 export class UserService {
 
-  constructor(private http: HttpService) {
+  constructor(private http: HttpService, @InjectRepository(UserRepository) private userRepository: UserRepository) {}
+
+  async createUser(createUserInput: PartialUserInput, user) {
+    return this.userRepository.createUser(createUserInput, user);
+  }
+
+  async getUser(id) {
+    return this.userRepository.getUser(id);
   }
 
   /**

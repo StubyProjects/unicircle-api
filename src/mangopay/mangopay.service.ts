@@ -3,11 +3,14 @@ import MangoPay from 'mangopay2-nodejs-sdk';
 import * as dotenv from 'dotenv';
 import { CreateMangouserInput } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
+import { UserService } from '../user/user.service';
 
 dotenv.config();
 
 @Injectable()
 export class MangopayService {
+
+  constructor(private userService: UserService) {}
 
   private static getClient() {
     const validConfig: MangoPay.Config = {
@@ -21,8 +24,9 @@ export class MangopayService {
   /**
    * Creates a new natural user in the MangoPay backend.
    * @param createMangoUserInput - the data about the user
+   * @param auth0User - the auth0User who is creating a new mangoPay profile for himself.
    */
-  async createUser(createMangoUserInput: CreateMangouserInput) {
+  async createUser(createMangoUserInput: CreateMangouserInput, auth0User) {
    const { firstName, lastName, address, birthday, occupation,
      email,} = createMangoUserInput;
 
@@ -38,13 +42,16 @@ export class MangopayService {
       "Email": email,
       "Tag": "tag",
     }, async user => {
+      //Creates a wallet for the new user
       await MangopayService.getClient().Wallets.create({
         Owners: [ user.Id ],
         Description: "create wallet for user " + user,
         Currency: "EUR",
       }).then(wallet => {
           console.log("Wallet successfully created ", wallet)
-        });
+      });
+      //Saves the id of the user in our database
+      await this.userService.createUser({ mangoPayId: user.Id }, auth0User);
       return user;
     });
   }

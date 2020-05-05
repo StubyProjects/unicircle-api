@@ -4,12 +4,11 @@ import { CreateProductInput } from '../dto/create-product.input';
 import { CreateListingInput } from '../dto/create-listing.input';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
-import { GetProductsFilterDto, PartialProductFilter } from '../dto/get-products-filter.dto';
 import { UpdateListingInput } from '../dto/create-listing.input';
 import { User } from '../../custom-decorators/user.decorator';
 import { UserModel as UserEntity} from '../../types/user.model';
-import { Product } from '../entities/product.entity';
 import { Productlisting } from '../entities/productlisting.entity';
+import { PartialProductFilter } from '../dto/get-products-filter.dto';
 
 /**
  * Controller for the product. Communicates with the frontend Client application.
