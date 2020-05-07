@@ -1,5 +1,10 @@
 import { IsObject, IsString } from 'class-validator';
 
+export class Action {
+  url: string;
+  text: string;
+}
+
 export class CreateNotificationInput {
 
   @IsString()
@@ -13,8 +18,3 @@ export class CreateNotificationInput {
 }
 
 export type UpdateOrderInput = Partial<CreateNotificationInput>;
-
-export class Action {
-  url: string;
-  text: string;
-}
