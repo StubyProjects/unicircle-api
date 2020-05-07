@@ -20,7 +20,8 @@ export class NotificationRepository extends Repository<Notification> {
     const notification = new Notification();
     notification.title = title;
     notification.description = description;
-    notification.action = action;
+    notification.url = action.url;
+    notification.text = action.text;
     await notification.save();
     return notification;
   }

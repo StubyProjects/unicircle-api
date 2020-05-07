@@ -1,6 +1,6 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsArray, IsString } from 'class-validator';
-import { Action } from './dto/create-notification.input';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsString } from 'class-validator';
+
 
 @Entity()
 export class Notification extends BaseEntity{
@@ -9,11 +9,20 @@ export class Notification extends BaseEntity{
   id: string;
 
   @IsString()
+  @Column()
   title: string;
 
   @IsString()
+  @Column()
   description: string;
 
-  @IsArray()
-  action: Action;
+  @IsString()
+  @Column()
+  url: string;
+
+  @IsString()
+  @Column()
+  text: string;
+
+
 }
