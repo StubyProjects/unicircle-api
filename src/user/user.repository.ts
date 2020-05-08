@@ -1,7 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { PartialUserInput } from './dto/create-user.input';
-import { HttpException } from '@nestjs/common';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -28,13 +27,10 @@ export class UserRepository extends Repository<UserEntity> {
    * Retrieves a user by its id.
    * @param id - id of the user.
    */
-  async getUser(id) {
-    const user = await this.findOne(id);
+  async getMangoPayWithAuth0(id) {
+    const user = await this.findOne({ auth0Id: id });
     if(user) {
-      return user;
-    }
-    else {
-      return new HttpException('No user with this id in the database', 400);
+      return user.mangoPayId;
     }
   }
 }

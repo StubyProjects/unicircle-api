@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserModel } from '../types/user.model';
@@ -34,14 +34,11 @@ export class UserController {
     return this.userService.createUser(createUserInput, user);
   }
 
-  /**
-   * Returns the users auth0 id, mangoPay id and routing id.
-   * If there is no user with the specified id, an exception gets returned.
-   * @param id
-   */
-  @Get('/:id')
-  async getUserById(@Param()id: string) {
-    return this.userService.getUser(id);
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  async getUser (
+    @User() user: UserEntity
+  ) {
+    return await this.userService.getUser(user);
   }
-
 }

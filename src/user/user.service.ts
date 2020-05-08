@@ -2,7 +2,7 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
-import { CreateUserInput, PartialUserInput } from './dto/create-user.input';
+import { PartialUserInput } from './dto/create-user.input';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -18,8 +18,26 @@ export class UserService {
     return this.userRepository.createUser(createUserInput, user);
   }
 
-  async getUser(id) {
-    return this.userRepository.getUser(id);
+  async getUser(user) {
+    const userAuth0 = await this.getAuth0UserById(user.sub)
+
+    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user.sub)
+    return {
+      userAuth0,
+      profileIsCompleted: !!mangoPayId
+    }
+
+  }
+
+  async updateProfileImage(user, updateUserInput: UpdateUserInput) {
+
+    const token = await this.getAuth0Token();
+
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+    };
+
+    return await this.http.patch(process.env.AUTH0_API + 'users/' + user.sub, updateUserInput, { headers: headers } ).toPromise();
   }
 
   /**
@@ -37,16 +55,16 @@ export class UserService {
     const response = await this.http.post(process.env.AUTH0_TOKEN_DOMAIN, body, { headers: headers }).toPromise();
     return response.data.access_token;
   }
-
-  async updateProfileImage(user, updateUserInput: UpdateUserInput) {
-
+  /**
+   * Retrieves the Auth0 user based on its id
+   * @param id Auth0 user id
+   */
+  private async getAuth0UserById(id) {
     const token = await this.getAuth0Token();
-
     const headers = {
       'Authorization': `Bearer ${token}`,
     };
-
-    return await this.http.patch(process.env.AUTH0_API + 'users/' + user.sub, updateUserInput, { headers: headers } ).toPromise();
+    const user = await this.http.get(process.env.AUTH0_API + 'users/' + id, { headers: headers }).toPromise();
+    return user.data;
   }
-
 }
