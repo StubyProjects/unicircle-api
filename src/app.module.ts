@@ -19,7 +19,7 @@ import { NotificationModule } from './notification/notification.module';
     OrderModule,
     UnitTestModule,
     UserModule,
-    NotificationModule
+    NotificationModule,
   ]
 })
 export class AppModule {}

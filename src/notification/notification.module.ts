@@ -10,8 +10,8 @@ import { UserNotificationRepository } from './repositories/userNotification.repo
     TypeOrmModule.forFeature([NotificationRepository, UserNotificationRepository]),
   ],
   providers: [
-    NotificationService,
+    NotificationService
   ],
-  controllers: [NotificationController],
+  controllers: [NotificationController]
 })
 export class NotificationModule {}
