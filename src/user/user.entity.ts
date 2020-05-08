@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsString } from 'class-validator';
+import { UserNotification } from '../notification/entities/userNotification.entity';
 
 @Entity()
 export class UserEntity extends BaseEntity {
@@ -18,4 +19,7 @@ export class UserEntity extends BaseEntity {
   @IsString()
   @Column()
   routeId: string;
+
+  @OneToMany(type => UserNotification, userNotification => userNotification.user)
+  userNotifications: UserNotification[];
 }

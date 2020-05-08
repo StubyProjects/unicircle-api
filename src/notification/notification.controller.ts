@@ -4,23 +4,56 @@
  * @author (Paul Dietrich)
  * @version (07.05.2020)
  */
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
-import { Notification } from './notification.entity';
+import { Notification } from './entities/notification.entity';
+import { DeleteResult } from 'typeorm';
+import { User } from '../custom-decorators/user.decorator';
+import { AuthGuard } from '@nestjs/passport';
+import { UserModel } from '../types/user.model';
+import { UserNotification } from './entities/userNotification.entity';
 
 @Controller('notification')
 export class NotificationController {
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService) {
+  }
 
   @Get('/:title')
   async getNotification(@Param('title') title: string): Promise<Notification> {
     return this.notificationService.getNotification(title);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/user')
+  async getAllUserNotifications(@User()user: UserModel) {
+    return this.notificationService.getAllUserNotifications(user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createNotification(@Body() createNotificationInput: CreateNotificationInput): Promise<Notification> {
     return this.notificationService.createNotification(createNotificationInput);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/user')
+  async createUserNotitfication(
+    @User() user: UserModel,
+    @Body('notification') notification: Notification): Promise<UserNotification> {
+    return this.notificationService.createUserNotification(user, notification);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('/:id')
+  async deleteNotification(@Param('id') notificationId: string): Promise<DeleteResult> {
+    return this.notificationService.deleteNotification(notificationId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('/user/:id')
+  async deleteUserNotification(@Param('id') notificationId: string) {
+    return this.notificationService.deleteUserNotification(notificationId);
   }
 }

@@ -1,6 +1,7 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { PartialUserInput } from './dto/create-user.input';
+import { UserNotification } from '../notification/entities/userNotification.entity';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {

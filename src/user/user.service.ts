@@ -3,6 +3,8 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { PartialUserInput } from './dto/create-user.input';
+import { UserNotificationRepository } from '../notification/repositories/userNotification.repository';
+import { getRepository } from 'typeorm';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -12,16 +14,25 @@ import { PartialUserInput } from './dto/create-user.input';
 @Injectable()
 export class UserService {
 
-  constructor(private http: HttpService, @InjectRepository(UserRepository) private userRepository: UserRepository) {}
+  constructor(private http: HttpService,
+              @InjectRepository(UserRepository) private userRepository: UserRepository,
+              @InjectRepository(UserNotificationRepository) private userNotificationRepository: UserNotificationRepository) {}
 
   async createUser(createUserInput: PartialUserInput, user) {
+    const { mangoPayId } = createUserInput;
+    // If the user hasn't got a mangoPay account yet, a notification gets added to the users notification list.
+    // This notification tells him that he should complete his account (i.d. create an mangoPay account)
+    if(mangoPayId == undefined) {
+      const completionNotification = await getRepository(Notification).findOne({ where: { title: "Vervollständige dein Profil"}});
+      await this.userNotificationRepository.createUserNotifictaion(user.sub, completionNotification);
+    }
     return this.userRepository.createUser(createUserInput, user);
   }
 
   async getUser(user) {
-    const userAuth0 = await this.getAuth0UserById(user.sub)
+    const userAuth0 = await this.getAuth0UserById(user.sub);
 
-    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user.sub)
+    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user.sub);
     return {
       userAuth0,
       profileIsCompleted: !!mangoPayId

@@ -1,11 +1,11 @@
 /**
- * Interacts with the order table in the database.
+ * Interacts with the notification table in the database.
  * @author (Paul Dietrich)
  * @version (16.04.2020)
  */
-import { EntityRepository, Repository } from 'typeorm';
-import { Notification } from './notification.entity';
-import { CreateNotificationInput } from './dto/create-notification.input';
+import { DeleteResult, EntityRepository, Repository } from 'typeorm';
+import { Notification } from '../entities/notification.entity';
+import { CreateNotificationInput } from '../dto/create-notification.input';
 
 @EntityRepository(Notification)
 export class NotificationRepository extends Repository<Notification> {
@@ -24,5 +24,9 @@ export class NotificationRepository extends Repository<Notification> {
     notification.text = action.text;
     await notification.save();
     return notification;
+  }
+
+  async deleteNotification(notificationId): Promise<DeleteResult> {
+    return this.delete(notificationId);
   }
 }
