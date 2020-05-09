@@ -26,10 +26,10 @@ export class UserRepository extends Repository<UserEntity> {
 
   /**
    * Retrieves a user by its id.
-   * @param id - id of the user.
+   * @param auth0user
    */
-  async getMangoPayWithAuth0(id) {
-    const user = await this.findOne({ auth0Id: id });
+  async getMangoPayWithAuth0(auth0user) {
+    const user = await this.findOne({ auth0Id: auth0user.sub });
     if(user) {
       return user.mangoPayId;
     }

@@ -12,13 +12,13 @@ export class UserNotificationRepository extends Repository<UserNotification> {
 
   /**
    * Generates a new many to many relation between an user an a notification.
-   * @param userId
+   * @param user
    * @param notification - the notification which should be displayed to the user.
    */
-  async createUserNotifictaion(userId, notification): Promise<UserNotification> {
+  async createUserNotifictaion(user, notification): Promise<UserNotification> {
 
     const userNotification = new UserNotification();
-    userNotification.userId = userId.sub;
+    userNotification.userId = user.sub;
     userNotification.notification = await getRepository(Notification).findOne({ where: { title: notification.title } });
     await userNotification.save();
     return userNotification;
