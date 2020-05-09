@@ -34,7 +34,7 @@ export class NotificationService {
     return this.notificationRepository.deleteNotification(notificationId);
   }
 
-  async deleteUserNotification(notificationId): Promise<DeleteResult> {
-    return this.userNotificationRepository.deleteUserNotification(notificationId);
+  async softDeleteUserNotification(notificationId): Promise<DeleteResult> {
+    return this.userNotificationRepository.softDeleteUserNotification(notificationId);
   }
 }

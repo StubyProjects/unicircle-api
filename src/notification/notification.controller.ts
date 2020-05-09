@@ -17,7 +17,9 @@ import { UserNotification } from './entities/userNotification.entity';
 @Controller('notification')
 export class NotificationController {
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService) {
+  }
+
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/user')
@@ -47,7 +49,7 @@ export class NotificationController {
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/user/:id')
-  async deleteUserNotification(@Param('id') notificationId: string) {
-    return this.notificationService.deleteUserNotification(notificationId);
+  async softDeleteUserNotification(@Param('id') notificationId: string) {
+    return this.notificationService.softDeleteUserNotification(notificationId);
   }
 }

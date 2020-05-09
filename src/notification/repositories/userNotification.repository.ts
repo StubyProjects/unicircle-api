@@ -34,7 +34,7 @@ export class UserNotificationRepository extends Repository<UserNotification> {
     return userNotification;
   }
 
-  async deleteUserNotification(userNotificationId) {
+  async softDeleteUserNotification(userNotificationId) {
     return this.update(userNotificationId, { deleted: true });
   }
 
