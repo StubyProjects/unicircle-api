@@ -4,7 +4,7 @@
  * @author (Paul Dietrich)
  * @version (07.05.2020)
  */
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { Notification } from './entities/notification.entity';
@@ -46,7 +46,7 @@ export class NotificationController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete('/user/:id')
+  @Patch('/user/:id')
   async deleteUserNotification(@Param('id') notificationId: string) {
     return this.notificationService.deleteUserNotification(notificationId);
   }

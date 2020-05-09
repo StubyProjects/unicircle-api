@@ -3,9 +3,9 @@
  * @author (Paul Dietrich)
  * @version (16.04.2020)
  */
-import { EntityRepository, getRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { UserNotification } from '../entities/userNotification.entity';
-import { Notification } from '../entities/notification.entity';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @EntityRepository(UserNotification)
 export class UserNotificationRepository extends Repository<UserNotification> {
@@ -19,25 +19,39 @@ export class UserNotificationRepository extends Repository<UserNotification> {
 
     const userNotification = new UserNotification();
     userNotification.userId = user.sub;
-    userNotification.notification = await getRepository(Notification).findOne({ where: { title: notification.title } });
-    await userNotification.save();
+    userNotification.notification = notification
+    userNotification.deleted = false;
+    try {
+      await userNotification.save();
+    } catch (error) {
+      if(error.code === 'ER_DUP_ENTRY') {
+        console.log('Notification already Exists')
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+
     return userNotification;
   }
 
   async deleteUserNotification(userNotificationId) {
-    return this.delete(userNotificationId);
+    return this.update(userNotificationId, { deleted: true });
   }
 
   /**
    * Retrieves all notifications the specified user has
    * @param user
    */
-  async getAllUserNotifications(user): Promise<Notification[]> {
-    return await getRepository(Notification)
-      .createQueryBuilder("notification")
-      .innerJoin("notification.userNotifications", "userNotification")
-      .where("userNotification.userId = :userId", { userId: user.sub })
-      .getMany();
+  async getAllUserNotifications(user): Promise<UserNotification[]> {
+
+    return await this.find({
+      select: ['id'],
+      relations: ['notification'],
+      where: {
+        userId: user.sub,
+        deleted: false
+      }
+    })
   }
 }
 

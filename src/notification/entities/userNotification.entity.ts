@@ -1,10 +1,11 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Notification } from './notification.entity';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 /**
  * Many To Many Relation between User and Notification.
  */
+@Unique(["userId", "notification"])
 @Entity()
 export class UserNotification extends BaseEntity {
 
@@ -17,4 +18,8 @@ export class UserNotification extends BaseEntity {
 
   @ManyToOne(type => Notification, notification => notification.userNotifications)
   notification: Notification;
+
+  @IsBoolean()
+  @Column()
+  deleted: boolean;
 }
