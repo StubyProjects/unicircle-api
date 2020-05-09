@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { PartialUserInput } from './dto/create-user.input';
 import { UserNotificationRepository } from '../notification/repositories/userNotification.repository';
-import { getRepository } from 'typeorm';
+import { NotificationRepository } from '../notification/repositories/notification.repository';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -14,22 +14,26 @@ import { getRepository } from 'typeorm';
 @Injectable()
 export class UserService {
 
-  constructor(private http: HttpService,
-              @InjectRepository(UserRepository) private userRepository: UserRepository,
-              @InjectRepository(UserNotificationRepository) private userNotificationRepository: UserNotificationRepository) {}
+  constructor(
+    private http: HttpService,
+    @InjectRepository(UserRepository) private userRepository: UserRepository,
+    @InjectRepository(UserNotificationRepository) private userNotificationRepository: UserNotificationRepository,
+    @InjectRepository(NotificationRepository) private notificationRepository: NotificationRepository) {}
 
-  async createUser(createUserInput: PartialUserInput, user) {
+
+async createUser(createUserInput: PartialUserInput, user) {
     return this.userRepository.createUser(createUserInput, user);
   }
 
   async getUser(user) {
+
     const userAuth0 = await this.getAuth0UserById(user.sub);
 
     const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user.sub);
     const profileIsCompleted = !!mangoPayId;
     if(!profileIsCompleted) {
-      const completionNotification = await getRepository(Notification).findOne({ where: { title: "Vervollständige dein Profil"}});
-      await this.userNotificationRepository.createUserNotifictaion(user.sub, completionNotification);
+       const completionNotification = await this.notificationRepository.findOne({ where: { title: "Vervollständige dein Profil"}});
+       await this.userNotificationRepository.createUserNotifictaion(user.sub, completionNotification);
     }
     return {
       userAuth0,

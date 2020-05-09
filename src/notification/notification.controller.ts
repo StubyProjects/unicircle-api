@@ -17,13 +17,7 @@ import { UserNotification } from './entities/userNotification.entity';
 @Controller('notification')
 export class NotificationController {
 
-  constructor(private notificationService: NotificationService) {
-  }
-
-  @Get('/:title')
-  async getNotification(@Param('title') title: string): Promise<Notification> {
-    return this.notificationService.getNotification(title);
-  }
+  constructor(private notificationService: NotificationService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/user')
