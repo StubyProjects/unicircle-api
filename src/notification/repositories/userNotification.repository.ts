@@ -3,8 +3,9 @@
  * @author (Paul Dietrich)
  * @version (16.04.2020)
  */
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { UserNotification } from '../entities/userNotification.entity';
+import { Notification } from '../entities/notification.entity';
 
 @EntityRepository(UserNotification)
 export class UserNotificationRepository extends Repository<UserNotification> {
@@ -17,8 +18,8 @@ export class UserNotificationRepository extends Repository<UserNotification> {
   async createUserNotifictaion(userId, notification): Promise<UserNotification> {
 
     const userNotification = new UserNotification();
-    userNotification.userId = userId;
-    userNotification.notification = notification;
+    userNotification.userId = userId.sub;
+    userNotification.notification = await getRepository(Notification).findOne({ where: { title: notification.title } });
     await userNotification.save();
     return userNotification;
   }
@@ -31,13 +32,12 @@ export class UserNotificationRepository extends Repository<UserNotification> {
    * Retrieves all notifications the specified user has
    * @param user
    */
-  async getAllUserNotifications(user): Promise<UserNotification[]> {
-    return await this.find({
-      relations: ['notification'],
-      where: {
-        userId: user.sub
-      }
-    })
+  async getAllUserNotifications(user): Promise<Notification[]> {
+    return await getRepository(Notification)
+      .createQueryBuilder("notification")
+      .innerJoin("notification.userNotifications", "userNotification")
+      .where("userNotification.userId = :userId", { userId: user.sub })
+      .getMany();
   }
 }
 

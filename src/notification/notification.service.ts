@@ -18,7 +18,7 @@ export class NotificationService {
   constructor(@InjectRepository(NotificationRepository)private notificationRepository: NotificationRepository,
               @InjectRepository(UserNotificationRepository)private userNotificationRepository: UserNotificationRepository) {}
 
-  async getAllUserNotifications(user): Promise<UserNotification[]> {
+  async getAllUserNotifications(user): Promise<Notification[]> {
     return this.userNotificationRepository.getAllUserNotifications(user);
   }
 
