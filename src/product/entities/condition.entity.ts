@@ -18,7 +18,7 @@ export class Condition extends BaseEntity{
 }
 
 export enum conditionName {
-  NEU = "NEU",
-  GUT = "GUT",
-  USED = "GEBRAUCHT"
+  "NEU" ,
+  "GUT" ,
+ "GEBRAUCHT"
 }

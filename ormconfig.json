@@ -5,7 +5,9 @@
   "username": "root",
   "password": "",
   "database": "unicircle",
-  "entities": ["dist/**/*.entity.js"],
+  "entities": ["dist/**/*.entity.js", "src/**/*.entity{.ts,.js}", "src/**/entities/*.entity{.ts,.js}"],
   "synchronize": true,
-  "logging": true
+  "logging": true,
+  "seeds": ["src/shared/seeding/seeds/*{.ts,.js}"],
+  "factories": ["src/shared/seeding/factories/*{.ts,.js}"]
 }

@@ -1,7 +1,6 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsString } from 'class-validator';
 import { UserNotification } from './userNotification.entity';
-import { Reading } from '../../university/entities/reading.entity';
 
 
 @Entity()
