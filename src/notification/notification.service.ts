@@ -18,7 +18,7 @@ export class NotificationService {
   constructor(@InjectRepository(NotificationRepository)private notificationRepository: NotificationRepository,
               @InjectRepository(UserNotificationRepository)private userNotificationRepository: UserNotificationRepository) {}
 
-  async getAllUserNotifications(user): Promise<Notification[]> {
+  async getAllUserNotifications(user): Promise<UserNotification[]> {
     return this.userNotificationRepository.getAllUserNotifications(user);
   }
 
@@ -34,7 +34,7 @@ export class NotificationService {
     return this.notificationRepository.deleteNotification(notificationId);
   }
 
-  async deleteUserNotification(notificationId): Promise<DeleteResult> {
-    return this.userNotificationRepository.deleteUserNotification(notificationId);
+  async softDeleteUserNotification(notificationId): Promise<DeleteResult> {
+    return this.userNotificationRepository.softDeleteUserNotification(notificationId);
   }
 }

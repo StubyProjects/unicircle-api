@@ -21,7 +21,7 @@ export class UserService {
     @InjectRepository(NotificationRepository) private notificationRepository: NotificationRepository) {}
 
 
-async createUser(createUserInput: PartialUserInput, user) {
+  async createUser(createUserInput: PartialUserInput, user) {
     return this.userRepository.createUser(createUserInput, user);
   }
 
@@ -29,11 +29,12 @@ async createUser(createUserInput: PartialUserInput, user) {
 
     const userAuth0 = await this.getAuth0UserById(user.sub);
 
-    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user.sub);
+    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user);
     const profileIsCompleted = !!mangoPayId;
+
     if(!profileIsCompleted) {
        const completionNotification = await this.notificationRepository.findOne({ where: { title: "Vervollständige dein Profil"}});
-       await this.userNotificationRepository.createUserNotifictaion(user.sub, completionNotification);
+       await this.userNotificationRepository.createUserNotifictaion(user, completionNotification);
     }
     return {
       userAuth0,
