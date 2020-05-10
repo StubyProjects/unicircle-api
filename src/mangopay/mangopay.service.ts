@@ -81,6 +81,7 @@ export class MangopayService {
       "CountryOfResidence": "DE",
       "PersonType": "NATURAL",
       "Email": email,
+      "Tag": "GUEST"
     }, async user => {
       return user;
     });
