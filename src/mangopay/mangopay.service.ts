@@ -170,7 +170,7 @@ export class MangopayService {
       sellerWallet = res[0];
     });
     await MangopayService.getClient().Users.getWallets(buyerId, (res) => {
-      buyerWallet = res;
+      buyerWallet = res[0];
     });
 
     await MangopayService.getClient().Transfers.create({
