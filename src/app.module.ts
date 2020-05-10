@@ -12,7 +12,17 @@ import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     AuthzModule,
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: 'root',
+        password: '',
+        database: 'unicircle',
+        entities: [__dirname +"/**/*.entity{.ts,.js}", __dirname+"/**/entities/*.entity{.ts,.js}"],
+        synchronize: true,
+        logging: true
+    }),
     ProductsModule,
     ReviewModule,
     UniversityModule,
@@ -23,4 +33,3 @@ import { NotificationModule } from './notification/notification.module';
   ]
 })
 export class AppModule {}
-

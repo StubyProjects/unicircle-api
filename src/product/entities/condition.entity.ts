@@ -8,17 +8,11 @@ export class Condition extends BaseEntity{
   id: string;
 
   @Column()
-  name: conditionName;
+  name: string;
 
   @Column()
   description: string;
 
   @OneToMany(type => Productlisting, productListing => productListing.condition)
   productListing: Productlisting[];
-}
-
-export enum conditionName {
-  "NEU" ,
-  "GUT" ,
- "GEBRAUCHT"
 }

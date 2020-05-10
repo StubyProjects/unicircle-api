@@ -1,9 +1,8 @@
-
 import { define } from 'typeorm-seeding';
-import { Condition, conditionName } from '../../../product/entities/condition.entity';
+import { Condition } from '../../../product/entities/condition.entity';
 
 define(Condition, () => {
-  const name: conditionName = 1;
+  const name = "Neu";
   const description = "Guter Zustand dies das";
 
   const condition = new Condition();

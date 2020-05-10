@@ -1,10 +1,9 @@
 import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Image } from '../entities/image.entity';
-import { conditionName } from '../entities/condition.entity';
 import { Product } from '../entities/product.entity';
 export class CreateListingInput {
   @IsString()
-  conditionName: conditionName;
+  conditionName: string;
 
   @IsString()
   conditionDescription: string;
