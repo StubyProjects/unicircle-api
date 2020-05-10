@@ -38,7 +38,8 @@ export class UserService {
     }
     return {
       userAuth0,
-      profileIsCompleted
+      profileIsCompleted,
+      mangoPayId
     }
 
   }

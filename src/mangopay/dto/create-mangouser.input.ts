@@ -7,3 +7,5 @@ export class CreateMangouserInput {
   occupation: string;
   email: string;
 }
+
+export type CreateGuestUser = Partial<CreateMangouserInput>;

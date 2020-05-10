@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { MangopayService } from './mangopay.service';
 import { CreateMangouserInput } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
@@ -22,9 +22,31 @@ export class MangopayController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Patch('/transfer')
+  async transferMoney(
+    @Body('sellerId') sellerId: string,
+    @Body('buyerId') buyerId: string,
+    @Body('amount') amount: string) {
+    return this.MangoPayService.transferMoney(sellerId, buyerId, amount);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/payout')
+  async payOutMoney(
+    @User() user: UserEntity,
+    @Body('amount') amount: string) {
+    return this.MangoPayService.payOutMoney(user, amount);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createUser(@Body() createMangoUserInput: CreateMangouserInput, @User() user: UserEntity) {
     return this.MangoPayService.createUser(createMangoUserInput, user);
+  }
+
+  @Post('/guest')
+  async createGuestUser(@Body() createMangoUserInput: CreateMangouserInput) {
+    return this.MangoPayService.createGuestUser(createMangoUserInput);
   }
 
   @Post('bankAccount')
