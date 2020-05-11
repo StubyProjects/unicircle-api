@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import MangoPay from 'mangopay2-nodejs-sdk';
+import { HttpService, Injectable } from '@nestjs/common';
+import MangoPay, { user } from 'mangopay2-nodejs-sdk';
 import * as dotenv from 'dotenv';
 import { CreateGuestUser, CreateMangouserInput } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
@@ -12,13 +12,14 @@ import Wallet = MangoPay.models.Wallet;
 import PayInPaymentType = MangoPay.payIn.PayInPaymentType;
 import { getRepository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
+import WalletData = MangoPay.wallet.WalletData;
 
 dotenv.config();
 
 @Injectable()
 export class MangopayService {
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private http: HttpService) {}
 
   private static getClient() {
     const validConfig: MangoPay.Config = {
@@ -123,8 +124,58 @@ export class MangopayService {
     return eMoney;
   }
 
-  async payInMoney(amount, userId) {
-    //await MangopayService.getClient().PayIns.create({}, () => {})
+  async payInMoney(amount, auth0User) {
+    const user = await this.userService.getUser(auth0User);
+    const userId: any = user.mangoPayId;
+
+    let wallet: WalletData = undefined;
+    await MangopayService.getClient().Users.getWallets(userId, (res) => {
+      wallet = res[0];
+    });
+
+    const body = {
+      "AuthorId": userId,
+      "DebitedFunds": {
+        "Currency": "EUR",
+        "Amount": amount
+      },
+      "Fees": {
+        "Currency": "EUR",
+        "Amount": 0
+      },
+      "ReturnURL": "http://localhost:3000/",
+      "CardType": "CB_VISA_MASTERCARD",
+      "CreditedWalletId": wallet.Id,
+      "SecureMode": "DEFAULT",
+      "Culture": "DE",
+      "StatementDescriptor": "Unicircle Money"
+    };
+    this.http.post('https://api.sandbox.mangopay.com/v2.01/' + process.env.MANGO_CLIENT_ID + '/payins/card/web', body)
+    /*
+    const user = await this.userService.getUser(auth0User);
+    const userId: any = user.mangoPayId;
+    let wallet: WalletData = undefined;
+    await MangopayService.getClient().Users.getWallets(userId, (res) => {
+      wallet = res[0];
+    });
+    await MangopayService.getClient().PayIns.create({
+      AuthorId: userId,
+      DeclaredDebitedFunds: {
+        Currency: "EUR",
+        Amount: amount
+      },
+      DeclaredFees: {
+        Currency: "EUR",
+        Amount: 0
+      },
+      ExecutionType: 'DIRECT',
+      PaymentType: 'BANK_WIRE',
+      CreditedUserId: userId,
+      CreditedWalletId: wallet.Id
+    }, (payIn) => {
+      console.log('payIn ' + payIn + ' to ' + wallet + ' successfully executed.');
+    })
+     */
   }
 
   async payOutMoney(auth0User, amount) {
@@ -132,7 +183,7 @@ export class MangopayService {
     const userId: any = user.mangoPayId;
 
     let bankAccount: BankAccount = undefined;
-    let wallet = undefined;
+    let wallet: WalletData = undefined;
     await MangopayService.getClient().Users.getBankAccounts(userId, (res) => {
       bankAccount = res[0];
     });
@@ -143,11 +194,11 @@ export class MangopayService {
       AuthorId: userId,
       DebitedFunds: {
         Currency: "EUR",
-        Amount: amount
+        Amount: amount - (amount * 0.08)
       },
       Fees: {
         Currency: "EUR",
-        Amount: 0
+        Amount: amount * 0.08
       },
       BankAccountId: bankAccount.Id,
       DebitedWalletId: wallet.Owners[0]
@@ -158,7 +209,6 @@ export class MangopayService {
 
   /**
    * Transfer money from the wallet of one user to another users wallet.
-   * The Marketplace owner gets a provision of 10% of the amount.
    * @param sellerId - id of the user who sold a product to the buyer.
    * @param buyerId - id of the user who bought a product from the seller.
    * @param amount - the price of the product (the money which should be transferred)
@@ -177,11 +227,11 @@ export class MangopayService {
       AuthorId: sellerId,
       DebitedFunds: {
         Currency: "EUR",
-        Amount: amount - (amount * 0.1)
+        Amount: amount,
       },
       Fees: {
         Currency: "EUR",
-        Amount: amount * 0.1
+        Amount: 0
       },
       CreditedWalletId: sellerWallet.Owners[0],
       DebitedWalletId: buyerWallet.Owners[0]
