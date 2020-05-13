@@ -13,6 +13,7 @@ import PayInPaymentType = MangoPay.payIn.PayInPaymentType;
 import { getRepository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import WalletData = MangoPay.wallet.WalletData;
+import CreateCardWebPayIn = MangoPay.payIn.CreateCardWebPayIn;
 
 dotenv.config();
 
@@ -124,58 +125,41 @@ export class MangopayService {
     return eMoney;
   }
 
-  async payInMoney(amount, auth0User) {
-    const user = await this.userService.getUser(auth0User);
-    const userId: any = user.mangoPayId;
-
-    let wallet: WalletData = undefined;
-    await MangopayService.getClient().Users.getWallets(userId, (res) => {
-      wallet = res[0];
-    });
-
-    const body = {
-      "AuthorId": userId,
-      "DebitedFunds": {
-        "Currency": "EUR",
-        "Amount": amount
-      },
-      "Fees": {
-        "Currency": "EUR",
-        "Amount": 0
-      },
-      "ReturnURL": "http://localhost:3000/",
-      "CardType": "CB_VISA_MASTERCARD",
-      "CreditedWalletId": wallet.Id,
-      "SecureMode": "DEFAULT",
-      "Culture": "DE",
-      "StatementDescriptor": "Unicircle Money"
-    };
-    this.http.post('https://api.sandbox.mangopay.com/v2.01/' + process.env.MANGO_CLIENT_ID + '/payins/card/web', body)
-    /*
-    const user = await this.userService.getUser(auth0User);
+  /**
+   * User pays in money via a Card Web PayIn to the wallet of the seller.
+   * @param amount - the price of the product('s) the user buys
+   * @param auth0User - the guest user
+   * @param creditedUser - the seller
+   * @param cardType - the type of the bank card of the buyer
+   */
+  async guestPayInMoneyCardWeb(amount, auth0User, creditedUser, cardType) {
+    const user = await this.userService.getUser(creditedUser);
     const userId: any = user.mangoPayId;
     let wallet: WalletData = undefined;
     await MangopayService.getClient().Users.getWallets(userId, (res) => {
       wallet = res[0];
     });
-    await MangopayService.getClient().PayIns.create({
+
+    const payIn: CreateCardWebPayIn = {
       AuthorId: userId,
-      DeclaredDebitedFunds: {
+      CardType: cardType,
+      CreditedWalletId: wallet.Id,
+      Culture: "DE",
+      DebitedFunds: {
         Currency: "EUR",
         Amount: amount
       },
-      DeclaredFees: {
+      ExecutionType: "WEB",
+      Fees: {
         Currency: "EUR",
         Amount: 0
       },
-      ExecutionType: 'DIRECT',
-      PaymentType: 'BANK_WIRE',
-      CreditedUserId: userId,
-      CreditedWalletId: wallet.Id
-    }, (payIn) => {
+      PaymentType: "CARD",
+      ReturnURL: "http://localhost:3000/"
+    };
+    await MangopayService.getClient().PayIns.create(payIn, (payIn) => {
       console.log('payIn ' + payIn + ' to ' + wallet + ' successfully executed.');
-    })
-     */
+    });
   }
 
   async payOutMoney(auth0User, amount) {
