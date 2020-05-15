@@ -9,6 +9,7 @@ import { NotificationRepository } from '../notification/repositories/notificatio
 @Module({
   imports: [HttpModule, TypeOrmModule.forFeature([UserRepository, UserNotificationRepository, NotificationRepository]) ],
   providers: [UserService],
-  controllers: [UserController]
+  controllers: [UserController],
+  exports: [UserService]
 })
 export class UserModule {}

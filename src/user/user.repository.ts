@@ -1,4 +1,4 @@
-import { EntityRepository, getRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { PartialUserInput } from './dto/create-user.input';
 
@@ -15,7 +15,7 @@ export class UserRepository extends Repository<UserEntity> {
 
     const user = new UserEntity();
     user.auth0Id = auth0User.sub;
-    user.routeId = Math.floor(Math.random()* 1000) + user.auth0Id;
+    user.routeId = Math.floor(Math.random()* 1000) + mangoPayId;
     if(mangoPayId !== undefined) {
       user.mangoPayId = mangoPayId;
     }

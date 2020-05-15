@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UniversityService } from '../university.service';
 import { University } from '../entities/university.entity';
-import { Course, GraduationType, Semester } from '../entities/course.entity';
-import { Reading } from '../entities/reading.entity';
+import { Course } from '../entities/course.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 /**

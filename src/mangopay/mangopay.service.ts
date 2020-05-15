@@ -1,17 +1,10 @@
-import { HttpService, Injectable } from '@nestjs/common';
-import MangoPay, { user } from 'mangopay2-nodejs-sdk';
+import {  Injectable } from '@nestjs/common';
+import MangoPay from 'mangopay2-nodejs-sdk';
 import * as dotenv from 'dotenv';
 import { CreateGuestUser, CreateMangouserInput } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
 import { UserService } from '../user/user.service';
-import PayIn = MangoPay.models.PayIn;
-import Transfer = MangoPay.models.Transfer;
-import PayOut = MangoPay.models.PayOut;
 import BankAccount = MangoPay.models.BankAccount;
-import Wallet = MangoPay.models.Wallet;
-import PayInPaymentType = MangoPay.payIn.PayInPaymentType;
-import { getRepository } from 'typeorm';
-import { UserEntity } from '../user/user.entity';
 import WalletData = MangoPay.wallet.WalletData;
 import CreateCardWebPayIn = MangoPay.payIn.CreateCardWebPayIn;
 
@@ -20,7 +13,9 @@ dotenv.config();
 @Injectable()
 export class MangopayService {
 
-  constructor(private userService: UserService, private http: HttpService) {}
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
   private static getClient() {
     const validConfig: MangoPay.Config = {
@@ -37,17 +32,14 @@ export class MangopayService {
    * @param auth0User - the auth0User who is creating a new mangoPay profile for himself.
    */
   async createUser(createMangoUserInput: CreateMangouserInput, auth0User) {
-   const { firstName, lastName, address, birthday, occupation,
-     email,} = createMangoUserInput;
+    const { firstName, lastName, birthday, email } = createMangoUserInput;
 
     await MangopayService.getClient().Users.create({
       "FirstName": firstName,
       "LastName": lastName,
-      "Address": address,
       "Birthday": birthday,
       "Nationality": "DE",
       "CountryOfResidence": "DE",
-      "Occupation": occupation,
       "PersonType": "NATURAL",
       "Email": email,
     }, async user => {
@@ -57,7 +49,7 @@ export class MangopayService {
         Description: "create wallet for user " + user,
         Currency: "EUR",
       }).then(wallet => {
-          console.log("Wallet successfully created ", wallet)
+        console.log("Wallet successfully created ", wallet)
       });
       //Saves the id of the user in our database
       await this.userService.createUser({ mangoPayId: user.Id }, auth0User);
@@ -71,13 +63,11 @@ export class MangopayService {
    * @param createMangoUserInput - the data about the user
    */
   async createGuestUser(createMangoUserInput: CreateGuestUser) {
-    const { firstName, lastName, address,
-      email,} = createMangoUserInput;
+    const { firstName, lastName, email} = createMangoUserInput;
 
     await MangopayService.getClient().Users.create({
       "FirstName": firstName,
       "LastName": lastName,
-      "Address": address,
       "Birthday": Math.floor(Math.random()*100),
       "Nationality": "DE",
       "CountryOfResidence": "DE",

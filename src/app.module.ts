@@ -8,6 +8,7 @@ import { OrderModule } from './order/order.module';
 import { UnitTestModule } from './unit-tests/unit-test.module';
 import { UserModule } from './user/user.module';
 import { NotificationModule } from './notification/notification.module';
+import { MangopayModule } from './mangopay/mangopay.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NotificationModule } from './notification/notification.module';
     UnitTestModule,
     UserModule,
     NotificationModule,
+    MangopayModule
   ]
 })
 export class AppModule {}
