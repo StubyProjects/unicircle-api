@@ -20,8 +20,11 @@ export class UserService {
     @InjectRepository(UserNotificationRepository) private userNotificationRepository: UserNotificationRepository,
     @InjectRepository(NotificationRepository) private notificationRepository: NotificationRepository) {}
 
-
+    /**
+   * completes the user
+   */
   async createUser(createUserInput: PartialUserInput, user) {
+    await this.userNotificationRepository.deleteUserNotification(user)
     return this.userRepository.createUser(createUserInput, user);
   }
 

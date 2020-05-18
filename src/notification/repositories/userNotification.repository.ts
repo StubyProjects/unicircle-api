@@ -38,6 +38,10 @@ export class UserNotificationRepository extends Repository<UserNotification> {
     return this.update(userNotificationId, { deleted: true });
   }
 
+  async deleteUserNotification(user) {
+    return this.delete({userId:user.sub})
+  }
+
   /**
    * Retrieves all notifications the specified user has
    * @param user
