@@ -39,7 +39,7 @@ export class UserNotificationRepository extends Repository<UserNotification> {
   }
 
   async deleteUserNotification(user) {
-    return this.delete({userId:user.sub})
+    return this.delete({userId:user.sub, })
   }
 
   /**

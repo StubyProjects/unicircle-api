@@ -7,6 +7,18 @@ export class CreateUserInput {
 
   @IsString()
   mangoPayId: string;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  birthday: number;
+
+  @IsString()
+  email: string;
 }
 
 export type PartialUserInput = Partial<CreateUserInput>;

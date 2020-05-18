@@ -5,6 +5,7 @@ import { UserRepository } from './user.repository';
 import { PartialUserInput } from './dto/create-user.input';
 import { UserNotificationRepository } from '../notification/repositories/userNotification.repository';
 import { NotificationRepository } from '../notification/repositories/notification.repository';
+import { MangopayService } from '../mangopay/mangopay.service';
 
 /**
  * Service which connects to the database for user related operations and also makes calls to the auth0 API.
@@ -16,16 +17,21 @@ export class UserService {
 
   constructor(
     private http: HttpService,
+    private mangoPay: MangopayService,
     @InjectRepository(UserRepository) private userRepository: UserRepository,
     @InjectRepository(UserNotificationRepository) private userNotificationRepository: UserNotificationRepository,
     @InjectRepository(NotificationRepository) private notificationRepository: NotificationRepository) {}
 
     /**
-   * completes the user
-   */
+      * completes the user
+      * actual user creation happens in the mangopay service
+      */
   async createUser(createUserInput: PartialUserInput, user) {
+    const { firstName, lastName, birthday, email } = createUserInput;
+    const newMangoUser = await this.mangoPay.createUser( {firstName, lastName, birthday, email})
+
     await this.userNotificationRepository.deleteUserNotification(user)
-    return this.userRepository.createUser(createUserInput, user);
+    return this.userRepository.createUser(newMangoUser, user);
   }
 
   async getUser(user) {
@@ -34,15 +40,19 @@ export class UserService {
 
     const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user);
     const profileIsCompleted = !!mangoPayId;
+    let mangoPayUser = null
 
     if(!profileIsCompleted) {
        const completionNotification = await this.notificationRepository.findOne({ where: { title: "Vervollständige dein Profil"}});
        await this.userNotificationRepository.createUserNotifictaion(user, completionNotification);
+    } else {
+      mangoPayUser = await this.mangoPay.getUserById(mangoPayId);
     }
     return {
       userAuth0,
       profileIsCompleted,
-      mangoPayId
+      mangoPayId,
+      mangoPayUser
     }
 
   }

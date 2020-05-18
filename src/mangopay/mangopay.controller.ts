@@ -3,10 +3,7 @@ import { MangopayService } from './mangopay.service';
 import { CreateMangouserInput } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../custom-decorators/user.decorator';
-import { UserEntity } from '../user/user.entity';
-import * as MangoPay from 'mangopay2-nodejs-sdk';
-import CardType = MangoPay.card.CardType;
+
 
 @Controller('mangopay')
 export class MangopayController {
@@ -32,28 +29,22 @@ export class MangopayController {
     return this.MangoPayService.transferMoney(sellerId, buyerId, amount);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('/payout')
-  async payOutMoney(
-    @User() user: UserEntity,
-    @Body('amount') amount: string) {
-    return this.MangoPayService.payOutMoney(user, amount);
-  }
-
-  @Patch('/guest/payIn')
-  async guestPayInCardWeb(
-    @User() buyer: UserEntity,
-    @Body('amount') amount: string,
-    @Body('seller') seller: UserEntity,
-    @Body('cardType') cardType: CardType) {
-    return this.MangoPayService.guestPayInMoneyCardWeb(amount, buyer, seller, cardType);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post()
-  async createUser(@Body() createMangoUserInput: CreateMangouserInput, @User() user: UserEntity) {
-    return this.MangoPayService.createUser(createMangoUserInput, user);
-  }
+  // @UseGuards(AuthGuard('jwt'))
+  // @Patch('/payout')
+  // async payOutMoney(
+  //   @User() user: UserEntity,
+  //   @Body('amount') amount: string) {
+  //   return this.MangoPayService.payOutMoney(user, amount);
+  // }
+  //
+  // @Patch('/guest/payIn')
+  // async guestPayInCardWeb(
+  //   @User() buyer: UserEntity,
+  //   @Body('amount') amount: string,
+  //   @Body('seller') seller: UserEntity,
+  //   @Body('cardType') cardType: CardType) {
+  //   return this.MangoPayService.guestPayInMoneyCardWeb(amount, buyer, seller, cardType);
+  // }
 
   @Post('/guest')
   async createGuestUser(@Body() createMangoUserInput: CreateMangouserInput) {

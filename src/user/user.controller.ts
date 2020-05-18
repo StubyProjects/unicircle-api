@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserModel } from '../types/user.model';
@@ -29,8 +29,11 @@ export class UserController {
    * @param createUserInput - the mangoPayId of the user
    * @param user - the auth0 user
    */
+  @Post()
   @UseGuards(AuthGuard('jwt'))
-  async createUser(@Body() createUserInput: PartialUserInput, @User() user: UserEntity) {
+  async createUser(
+    @Body() createUserInput: PartialUserInput,
+    @User() user: UserEntity) {
     return this.userService.createUser(createUserInput, user);
   }
 
