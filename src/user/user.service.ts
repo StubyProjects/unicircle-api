@@ -51,21 +51,29 @@ export class UserService {
     return {
       userAuth0,
       profileIsCompleted,
-      mangoPayId,
       mangoPayUser
     }
 
   }
 
-  async updateProfileImage(user, updateUserInput: UpdateUserInput) {
+  async updateProfile(user, updateUserInput: UpdateUserInput) {
 
+    const { firstName, lastName, birthday } = updateUserInput
+
+    const auth0UserInput = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      given_name: firstName,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      family_name: lastName
+    }
     const token = await this.getAuth0Token();
-
     const headers = {
       'Authorization': `Bearer ${token}`,
     };
+    await this.http.patch(process.env.AUTH0_API + 'users/' + user.sub, auth0UserInput, { headers: headers } ).toPromise();
 
-    return await this.http.patch(process.env.AUTH0_API + 'users/' + user.sub, updateUserInput, { headers: headers } ).toPromise();
+    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user);
+    await this.mangoPay.updateUser({ firstName, lastName, birthday }, mangoPayId)
   }
 
   /**

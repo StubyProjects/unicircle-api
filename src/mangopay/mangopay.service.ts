@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import MangoPay from 'mangopay2-nodejs-sdk';
 import * as dotenv from 'dotenv';
-import { CreateGuestUser, CreateMangouserInput } from './dto/create-mangouser.input';
+import { CreateGuestUser, CreateMangouserInput, UpdateMangoUser } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
 
 dotenv.config();
@@ -36,14 +36,33 @@ export class MangopayService {
        //Creates a wallet for the new user
        await MangopayService.getClient().Wallets.create({
          Owners: [user.Id],
-         Description: "create wallet for user " + user,
+         Description: "create wallet for user " + user.FirstName,
          Currency: "EUR",
        }).then(wallet => {
          console.log("Wallet successfully created ", wallet)
        });
        return user;
      });
+  }
 
+  /**
+   * Creates a new natural user in the MangoPay backend.
+   * @param updateMangoUser
+   * @param mangoPayId
+   */
+  async updateUser(updateMangoUser: UpdateMangoUser, mangoPayId) {
+    const { firstName, lastName, birthday } = updateMangoUser;
+
+    return await MangopayService.getClient().Users.update({
+      Id: mangoPayId,
+      FirstName: firstName,
+      LastName: lastName,
+      Birthday: birthday,
+      PersonType: "NATURAL"
+    }, async user => {
+      //Creates a wallet for the new user
+      return user;
+    });
   }
 
   /**

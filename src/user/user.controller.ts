@@ -17,11 +17,11 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Patch('updatePicture')
-  async updateProfileImage(
+  @Patch('update')
+  async updateProfile(
     @User() user: UserModel,
     @Body() updateUserInput: UpdateUserInput) {
-    await this.userService.updateProfileImage(user, updateUserInput);
+    await this.userService.updateProfile(user, updateUserInput);
   }
 
   /**
