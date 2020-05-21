@@ -1,4 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
+import MangoPay from 'mangopay2-nodejs-sdk';
+import AddressData = MangoPay.address.AddressData;
 
 export class UserInput {
   @IsString()
@@ -12,5 +14,7 @@ export class UserInput {
 
   @IsNumber()
   birthday: number;
+
+  Address: AddressData
 }
 export type UpdateUserInput = Partial<UserInput>;

@@ -46,7 +46,7 @@ export class MangopayService {
   }
 
   /**
-   * Creates a new natural user in the MangoPay backend.
+   * Updates a natural user in the MangoPay backend.
    * @param updateMangoUser
    * @param mangoPayId
    */
@@ -60,7 +60,18 @@ export class MangopayService {
       Birthday: birthday,
       PersonType: "NATURAL"
     }, async user => {
-      //Creates a wallet for the new user
+      return user;
+    });
+  }
+
+  async updateUserAdress(updateMangoUser: UpdateMangoUser, mangoPayId) {
+    const { Address } = updateMangoUser;
+
+    return await MangopayService.getClient().Users.update({
+      Id: mangoPayId,
+      Address,
+      PersonType: "NATURAL"
+    }, async user => {
       return user;
     });
   }

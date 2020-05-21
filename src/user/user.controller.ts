@@ -24,6 +24,14 @@ export class UserController {
     await this.userService.updateProfile(user, updateUserInput);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('updateUserAddress')
+  async updateUserAddress(
+    @User() user: UserModel,
+    @Body() updateUserInput: UpdateUserInput) {
+    await this.userService.updateUserAddress(user, updateUserInput);
+  }
+
   /**
    * Creates a new user
    * @param createUserInput - the mangoPayId of the user

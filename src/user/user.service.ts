@@ -88,6 +88,15 @@ export class UserService {
     await this.mangoPay.updateUser({ firstName, lastName, birthday }, mangoPayId)
   }
 
+  async updateUserAddress(user, updateUserInput: UpdateUserInput) {
+
+    const { Address } = updateUserInput
+
+    const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user);
+
+    await this.mangoPay.updateUserAdress({ Address }, mangoPayId)
+  }
+
   /**
    * Retrieves the bearer token from auth0 and then returns it.
    */
