@@ -3,6 +3,9 @@ import MangoPay from 'mangopay2-nodejs-sdk';
 import * as dotenv from 'dotenv';
 import { CreateGuestUser, CreateMangouserInput, UpdateMangoUser } from './dto/create-mangouser.input';
 import { CreateBankAccountInput } from './dto/createBankAccountInput';
+import CreateCardWebPayIn = MangoPay.payIn.CreateCardWebPayIn;
+import WalletData = MangoPay.wallet.WalletData;
+import BankAccount = MangoPay.models.BankAccount;
 
 dotenv.config();
 
@@ -24,7 +27,7 @@ export class MangopayService {
   async createUser(createMangoUserInput: CreateMangouserInput) {
     const { firstName, lastName, birthday, email } = createMangoUserInput;
 
-     return await MangopayService.getClient().Users.create({
+     return MangopayService.getClient().Users.create({
        "FirstName": firstName,
        "LastName": lastName,
        "Birthday": birthday,
@@ -53,7 +56,7 @@ export class MangopayService {
   async updateUser(updateMangoUser: UpdateMangoUser, mangoPayId) {
     const { firstName, lastName, birthday } = updateMangoUser;
 
-    return await MangopayService.getClient().Users.update({
+    return MangopayService.getClient().Users.update({
       Id: mangoPayId,
       FirstName: firstName,
       LastName: lastName,
@@ -67,7 +70,7 @@ export class MangopayService {
   async updateUserAdress(updateMangoUser: UpdateMangoUser, mangoPayId) {
     const { Address } = updateMangoUser;
 
-    return await MangopayService.getClient().Users.update({
+    return MangopayService.getClient().Users.update({
       Id: mangoPayId,
       Address,
       PersonType: "NATURAL"
@@ -133,68 +136,64 @@ export class MangopayService {
   /**
    * User pays in money via a Card Web PayIn to the wallet of the seller.
    * @param amount - the price of the product('s) the user buys
-   * @param auth0User - the guest user
+   * @param mangoPayUser - the guest user
    * @param creditedUser - the seller
    * @param cardType - the type of the bank card of the buyer
    */
-  // async guestPayInMoneyCardWeb(amount, auth0User, creditedUser, cardType) {
-  //   const user = await this.userService.getUser(creditedUser);
-  //   const userId: any = user.mangoPayId;
-  //   let wallet: WalletData = undefined;
-  //   await MangopayService.getClient().Users.getWallets(userId, (res) => {
-  //     wallet = res[0];
-  //   });
-  //
-  //   const payIn: CreateCardWebPayIn = {
-  //     AuthorId: userId,
-  //     CardType: cardType,
-  //     CreditedWalletId: wallet.Id,
-  //     Culture: "DE",
-  //     DebitedFunds: {
-  //       Currency: "EUR",
-  //       Amount: amount
-  //     },
-  //     ExecutionType: "WEB",
-  //     Fees: {
-  //       Currency: "EUR",
-  //       Amount: 0
-  //     },
-  //     PaymentType: "CARD",
-  //     ReturnURL: "http://localhost:3000/"
-  //   };
-  //   await MangopayService.getClient().PayIns.create(payIn, (payIn) => {
-  //     console.log('payIn ' + payIn + ' to ' + wallet + ' successfully executed.');
-  //   });
-  // }
+   async guestPayInMoneyCardWeb(amount, mangoPayUser, creditedUser, cardType) {
+    let wallet: WalletData = undefined;
+    await MangopayService.getClient().Users.getWallets(mangoPayUser.id, (res) => {
+       wallet = res[0];
+     });
 
-  // async payOutMoney(auth0User, amount) {
-  //   const user = await this.userService.getUser(auth0User);
-  //   const userId: any = user.mangoPayId;
-  //
-  //   let bankAccount: BankAccount = undefined;
-  //   let wallet: WalletData = undefined;
-  //   await MangopayService.getClient().Users.getBankAccounts(userId, (res) => {
-  //     bankAccount = res[0];
-  //   });
-  //   await MangopayService.getClient().Users.getWallets(userId, (res) => {
-  //     wallet = res[0];
-  //   });
-  //   await MangopayService.getClient().PayOuts.create({
-  //     AuthorId: userId,
-  //     DebitedFunds: {
-  //       Currency: "EUR",
-  //       Amount: amount - (amount * 0.08)
-  //     },
-  //     Fees: {
-  //       Currency: "EUR",
-  //       Amount: amount * 0.08
-  //     },
-  //     BankAccountId: bankAccount.Id,
-  //     DebitedWalletId: wallet.Owners[0]
-  //   }, () => {
-  //     console.log("Payout from " + wallet + " succeded!");
-  //   })
-  // }
+     const payIn: CreateCardWebPayIn = {
+       AuthorId: mangoPayUser.id,
+       CardType: cardType,
+       CreditedWalletId: wallet.Id,
+       Culture: "DE",
+       DebitedFunds: {
+         Currency: "EUR",
+         Amount: amount
+       },
+       ExecutionType: "WEB",
+         Fees: {
+         Currency: "EUR",
+         Amount: 0
+       },
+       PaymentType: "CARD",
+       ReturnURL: "http://localhost:3000/"
+     };
+     await MangopayService.getClient().PayIns.create(payIn, (payIn) => {
+       console.log('payIn ' + payIn + ' to ' + wallet + ' successfully executed.');
+     });
+   }
+
+   async payOutMoney(userId, amount) {
+
+     let bankAccount: BankAccount = undefined;
+     let wallet: WalletData = undefined;
+     await MangopayService.getClient().Users.getBankAccounts(userId, (res) => {
+       bankAccount = res[0];
+     });
+     await MangopayService.getClient().Users.getWallets(userId, (res) => {
+       wallet = res[0];
+     });
+     await MangopayService.getClient().PayOuts.create({
+       AuthorId: userId,
+       DebitedFunds: {
+         Currency: "EUR",
+         Amount: amount - (amount * 0.08)
+       },
+       Fees: {
+         Currency: "EUR",
+         Amount: amount * 0.08
+       },
+       BankAccountId: bankAccount.Id,
+       DebitedWalletId: wallet.Owners[0]
+     }, () => {
+       console.log("Payout from " + wallet + " succeded!");
+     })
+   }
 
   /**
    * Transfer money from the wallet of one user to another users wallet.

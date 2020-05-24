@@ -28,7 +28,7 @@ export class UserService {
       */
   async createUser(createUserInput: PartialUserInput, user) {
     const { firstName, lastName, birthday, email } = createUserInput;
-    const newMangoUser = await this.mangoPay.createUser( {firstName, lastName, birthday, email})
+    const newMangoUser = await this.mangoPay.createUser( {firstName, lastName, birthday, email});
 
       const auth0UserInput = {
         // eslint-disable-next-line @typescript-eslint/camelcase
@@ -42,7 +42,7 @@ export class UserService {
       };
       await this.http.patch(process.env.AUTH0_API + 'users/' + user.sub, auth0UserInput, { headers: headers } ).toPromise();
 
-    await this.userNotificationRepository.deleteUserNotification(user)
+    await this.userNotificationRepository.deleteUserNotification(user);
     return this.userRepository.createUser(newMangoUser, user);
   }
 
@@ -77,7 +77,7 @@ export class UserService {
       given_name: firstName,
       // eslint-disable-next-line @typescript-eslint/camelcase
       family_name: lastName
-    }
+    };
     const token = await this.getAuth0Token();
     const headers = {
       'Authorization': `Bearer ${token}`,
@@ -95,6 +95,10 @@ export class UserService {
     const mangoPayId = await this.userRepository.getMangoPayWithAuth0(user);
 
     await this.mangoPay.updateUserAdress({ Address }, mangoPayId)
+  }
+
+  async payOutCardWeb(user, amount) {
+    await this.mangoPay.payOutMoney(user.sub, amount);
   }
 
   /**

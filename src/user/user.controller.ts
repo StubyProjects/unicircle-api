@@ -32,6 +32,16 @@ export class UserController {
     await this.userService.updateUserAddress(user, updateUserInput);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('payout/cardweb')
+  async payOutCardWeb(
+    @User() user: UserModel,
+    @Body('amount') amount: number) {
+    await this.userService.payOutCardWeb(user, amount);
+  }
+
+
+
   /**
    * Creates a new user
    * @param createUserInput - the mangoPayId of the user
