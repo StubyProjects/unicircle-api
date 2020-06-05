@@ -134,6 +134,16 @@ export class MangopayService {
   }
 
   /**
+   * Retrieves the wallet of a specific user.
+   * @param userId - the id of the user
+   */
+  async getWallets(userId) {
+    return MangopayService.getClient().Users.getWallets(userId, res => {
+      return res
+    });
+  }
+
+  /**
    * User pays in money via a Card Web PayIn to the wallet of the seller.
    * @param amount - the price of the product('s) the user buys
    * @param mangoPayUser - the guest user

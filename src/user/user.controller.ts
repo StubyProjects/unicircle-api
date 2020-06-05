@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserModel } from '../types/user.model';
@@ -40,8 +40,6 @@ export class UserController {
     await this.userService.payOutCardWeb(user, amount);
   }
 
-
-
   /**
    * Creates a new user
    * @param createUserInput - the mangoPayId of the user
@@ -61,5 +59,13 @@ export class UserController {
     @User() user: UserEntity
   ) {
     return await this.userService.getUser(user);
+  }
+
+  @Get('wallet/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async getWallet (
+    @Param('id') id:number
+  ) {
+    return await this.userService.getUserWallet(id);
   }
 }

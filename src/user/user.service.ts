@@ -65,7 +65,10 @@ export class UserService {
       profileIsCompleted,
       mangoPayUser
     }
+  }
 
+  async getUserWallet(id) {
+    return await this.mangoPay.getWallets(id);
   }
 
   async updateProfile(user, updateUserInput: UpdateUserInput) {
